@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+/* :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
@@ -24,4 +24,112 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+} */
+
+.primaryColor {
+  background: #7e223c;
+}
+.primaryTextColor {
+  color: #7e223c;
+}
+.secondaryColor {
+  background: #c8a574;
+}
+.secondaryTextColor {
+  color: #c8a574;
+}
+.exploreTextColor {
+  color: #274143;
+}
+.thirdTextColor {
+  color: #274143;
+}
+.footerColor {
+  background: #274143;
+}
+.footerTextColor {
+  color: #baadad;
+}
+.semi-circle {
+  width: 144px;
+  height: 72px;
+  border-radius: 72px 72px 0 0;
+  background-color: red;
+}
+.hero-title {
+  color: #c8a574;
+  font-family: Baskerville Old Face;
+  font-size: 48px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-bottom: 28px;
+}
+.hero_paragraph {
+  color: #fff;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-size: 26px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+}
+.hero_div {
+  opacity: 0.9;
+  background: #274143;
+  width: 772px;
+}
+.heroSection {
+  height: 75vh;
+}
+.triangle {
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 20px solid #7e223c;
+  margin-right: 10px;
+}
+.triangleInverted {
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 20px solid #7e223c;
+  margin-right: 10px;
+}
+.footerTriangle {
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 20px solid #274143;
+  margin-right: 10px;
+}
+.template {
+  border: 4px solid #7e223c;
+}
+.template_Circle {
+  height: 68px;
+  width: 68px;
+}
+.template_text1 {
+  left: -50px;
+}
+
+.template_text2 {
+  left: -10px;
+}
+
+.buyProcessBorder {
+  border: 2px solid #7e223c;
+}
+
+.buy_inputPlaceholder::placeholder {
+  color: #7e223c;
+}
+.videoWidth {
+  width: 48%;
+}
+.align-stretch {
+  align-items: stretch;
 }
