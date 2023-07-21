@@ -47,11 +47,12 @@ function BuyNow(){
         date:  null
     }
 
-    const [bride, setBride] = useState<PersonState>(initialPersonState);
+    const [bride, setBride] = useState<PersonState>(formData?.brideData || initialPersonState);
+
     
-    const [groom, setGroom] = useState<PersonState>(initialPersonState);
-    const [event1, setEvent1] = useState<EventState>(initialEventState)
-    const [event2, setEvent2] = useState<EventState>(initialEventState)
+    const [groom, setGroom] = useState<PersonState>(formData?.groomData || initialPersonState);
+    const [event1, setEvent1] = useState<EventState>(formData?.event1Data || initialEventState)
+    const [event2, setEvent2] = useState<EventState>(formData?.event2Data || initialEventState)
 
     const handleBrideChange = (e: ChangeEvent<HTMLInputElement>) => {
         setBride({
