@@ -480,10 +480,10 @@ ansi-styles@^4.1.0:
   dependencies:
     color-convert "^2.0.1"
 
-antd@^5.7.0:
-  version "5.7.0"
-  resolved "https://registry.yarnpkg.com/antd/-/antd-5.7.0.tgz#2762e505c1fad16db871e7133fe551b4946a7089"
-  integrity sha512-jUu6wfoN633rKsTSJcfVtXYTMdVu885LoYm2A52Vur8gnYfP3GzekCuGpTXZKGZRwGLNs3D2HbpaHciusF+2Gg==
+antd@^5.7.2:
+  version "5.7.2"
+  resolved "https://registry.yarnpkg.com/antd/-/antd-5.7.2.tgz#466dcf661092357bcc0b9c26d447822d0c79d82c"
+  integrity sha512-1vNXPfVA969GN5MXjXRQFxdLLe3TTN668A+bpYuOSYeLJeS8rXkG4KwuW7zws0540agnWKVVqLrxGTS57Gb4pg==
   dependencies:
     "@ant-design/colors" "^7.0.0"
     "@ant-design/cssinjs" "^1.10.1"
@@ -506,9 +506,9 @@ antd@^5.7.0:
     rc-drawer "~6.2.0"
     rc-dropdown "~4.1.0"
     rc-field-form "~1.34.0"
-    rc-image "~7.0.0-2"
+    rc-image "~7.0.0"
     rc-input "~1.1.0"
-    rc-input-number "~8.0.0"
+    rc-input-number "~8.0.2"
     rc-mentions "~2.5.0"
     rc-menu "~9.10.0"
     rc-motion "^2.7.3"
@@ -521,7 +521,7 @@ antd@^5.7.0:
     rc-segmented "~2.2.0"
     rc-select "~14.5.0"
     rc-slider "~10.1.0"
-    rc-steps "~6.0.0"
+    rc-steps "~6.0.1"
     rc-switch "~4.1.0"
     rc-table "~7.32.1"
     rc-tabs "~12.9.0"
@@ -818,6 +818,11 @@ copy-to-clipboard@^3.2.0:
   integrity sha512-2KV8NhB5JqC3ky0r9PMCAZKbUHSwtEo4CwCs0KXgruG43gX5PMqDEBbVU4OUzw2MuAWUfsuFmWvEKG5QRfSnJA==
   dependencies:
     toggle-selection "^1.0.6"
+
+country-flag-icons@^1.5.4:
+  version "1.5.7"
+  resolved "https://registry.yarnpkg.com/country-flag-icons/-/country-flag-icons-1.5.7.tgz#f1f2ddf14f3cbf01cba6746374aeba94db35d4b4"
+  integrity sha512-AdvXhMcmSp7nBSkpGfW4qR/luAdRUutJqya9PuwRbsBzuoknThfultbv7Ib6fWsHXC43Es/4QJ8gzQQdBNm75A==
 
 cross-spawn@^7.0.2, cross-spawn@^7.0.3:
   version "7.0.3"
@@ -1618,6 +1623,13 @@ inherits@2:
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
 
+input-format@^0.3.8:
+  version "0.3.8"
+  resolved "https://registry.yarnpkg.com/input-format/-/input-format-0.3.8.tgz#9445b0cab2f0457fbe36d77d607e942fd37345c5"
+  integrity sha512-tLR0XRig1xIcG1PtIpMd/uoltvkAI62CN9OIbtj4/tEJAkqTCQLNHUZ9N4M46w0dopny7Rlt/lRH5Xzp7e6F+g==
+  dependencies:
+    prop-types "^15.8.1"
+
 internal-slot@^1.0.3, internal-slot@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/internal-slot/-/internal-slot-1.0.5.tgz#f2a2ee21f668f8627a4667f309dc0f4fb6674986"
@@ -1867,6 +1879,11 @@ levn@^0.4.1:
   dependencies:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
+
+libphonenumber-js@^1.10.37:
+  version "1.10.37"
+  resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.10.37.tgz#185264130c9375f17d0c487a288223294579929c"
+  integrity sha512-Z10PCaOCiAxbUxLyR31DNeeNugSVP6iv/m7UrSKS5JHziEMApJtgku4e9Q69pzzSC9LnQiM09sqsGf2ticZnMw==
 
 lilconfig@^2.0.5, lilconfig@^2.1.0:
   version "2.1.0"
@@ -2379,7 +2396,7 @@ rc-field-form@~1.34.0:
     async-validator "^4.1.0"
     rc-util "^5.32.2"
 
-rc-image@~7.0.0-2:
+rc-image@~7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/rc-image/-/rc-image-7.0.0.tgz#cad2105dd1708304328bc9c178f7953cb0198403"
   integrity sha512-pOr/LYthg5a+R2LDlFPv8u2ndX4aJQNghWCiWxflmLglC3p0uts/NIWLAituQOKvV1wO1aFI1CZtLMT7jrU3vA==
@@ -2391,10 +2408,10 @@ rc-image@~7.0.0-2:
     rc-motion "^2.6.2"
     rc-util "^5.34.1"
 
-rc-input-number@~8.0.0:
-  version "8.0.1"
-  resolved "https://registry.yarnpkg.com/rc-input-number/-/rc-input-number-8.0.1.tgz#77b66977c353e496b21f5e31bdd10217c214b510"
-  integrity sha512-b5LIQ9hmqPI/5NwoRQsQXftrrmuXxcaO9pftFnq4AkjPVtfCG+sqcGEIBmXC/YkS4p6R6dwqclpQLFJyMYx7DA==
+rc-input-number@~8.0.2:
+  version "8.0.3"
+  resolved "https://registry.yarnpkg.com/rc-input-number/-/rc-input-number-8.0.3.tgz#208efac9937370d3c987979558e7e4882564af09"
+  integrity sha512-GHfWvufXEmwF/wtR8oPZNTuMdFb/rvx/+Sp2bZfaPftM+LFFdO8o3/PaeTk8DKt0Tv+u5Zuf68lqLdGCkmAXRg==
   dependencies:
     "@babel/runtime" "^7.10.1"
     "@rc-component/mini-decimal" "^1.0.1"
@@ -2544,10 +2561,10 @@ rc-slider@~10.1.0:
     classnames "^2.2.5"
     rc-util "^5.27.0"
 
-rc-steps@~6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/rc-steps/-/rc-steps-6.0.0.tgz#f7148f8097d5d135f19b96c1b4f4b50ad6093753"
-  integrity sha512-+KfMZIty40mYCQSDvYbZ1jwnuObLauTiIskT1hL4FFOBHP6ZOr8LK0m143yD3kEN5XKHSEX1DIwCj3AYZpoeNQ==
+rc-steps@~6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/rc-steps/-/rc-steps-6.0.1.tgz#c2136cd0087733f6d509209a84a5c80dc29a274d"
+  integrity sha512-lKHL+Sny0SeHkQKKDJlAjV5oZ8DwCdS2hFhAkIjuQt1/pB81M0cA0ErVFdHq9+jmPmFw1vJB2F5NBzFXLJxV+g==
   dependencies:
     "@babel/runtime" "^7.16.7"
     classnames "^2.2.3"
@@ -2686,6 +2703,17 @@ react-is@^18.0.0:
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-18.2.0.tgz#199431eeaaa2e09f86427efbb4f1473edb47609b"
   integrity sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==
+
+react-phone-number-input@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/react-phone-number-input/-/react-phone-number-input-3.3.0.tgz#ac5a259523d93a7539ae1cab704f3241ce830bb6"
+  integrity sha512-6d1lq9parRGnVz6laEN7ijU7MeUCkFEJsTnzB/97nVrm/WE48EDEV5/2bu08mzfZjvX6shpryqG0DUCNiP07Cg==
+  dependencies:
+    classnames "^2.3.1"
+    country-flag-icons "^1.5.4"
+    input-format "^0.3.8"
+    libphonenumber-js "^1.10.37"
+    prop-types "^15.8.1"
 
 react-redux@^8.1.1:
   version "8.1.1"

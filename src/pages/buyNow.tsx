@@ -4,7 +4,8 @@ import BuyProcess from "@/components/BuyProcess";
 import { Switch } from 'antd';
 import ImageUploader from "@/components/ImageUploader";
 import { useDispatch, useSelector } from "react-redux";
-import { counterStates, setFormData } from "@/redux/counterReducer";
+import { counterStates, setFormData, setSignUpModal } from "@/redux/counterReducer";
+import SingUpModal from "@/components/SignUpModal";
 
 function BuyNow(){
     const dispatch = useDispatch()
@@ -14,7 +15,7 @@ function BuyNow(){
     const [relSide, setRelSide] = useState<string>("");
     const [addImage, setAddImage] = useState<boolean>(false);
 
-    const {formData} = useSelector(counterStates)
+    const {formData, userData} = useSelector(counterStates)
 
 
     interface PersonState {
@@ -95,6 +96,13 @@ function BuyNow(){
 
       function handleNextClick(){
           dispatch(setFormData({...formData,  brideData: bride, groomData: groom, event1Data: event1, event2Data: event2}))
+      }
+
+      function handleMakePayment(){
+          console.log("this is payment click")
+          if(!userData){
+              dispatch(setSignUpModal(true))
+          }
       }
 
     return(
@@ -207,9 +215,10 @@ function BuyNow(){
            )}
            {page === 4 && (
                <div className="text-center mt-20 mb-10">
-                   <button className="w-56 buyProcessBorder py-4  text-xl font-normal primaryColor text-white ml-8">Make Payment</button>
+                   <button className="w-56 buyProcessBorder py-4  text-xl font-normal primaryColor text-white ml-8" onClick={handleMakePayment}>Make Payment</button>
                </div>
            )}
+           <SingUpModal />
            <div className="text-center mt-20 mb-10">
                 <button className={`w-56 buyProcessBorder py-4 text-xl font-normal primaryTextColor mr-8 ${page < 2 ? 'opacity-20' : ''}`}
                                 onClick={() => setPage(page - 1)}

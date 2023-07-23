@@ -5,6 +5,7 @@ export const counterSlice = createSlice({
   initialState: {
     formData: null,
     userData: null,
+    signUpModal: null,
   },
   reducers: {
     setFormData: (state, action) => {
@@ -13,9 +14,13 @@ export const counterSlice = createSlice({
     setUserData: (state, action) => {
       state.userData = action.payload;
     },
+    setSignUpModal: (state, action) => {
+      state.signUpModal = action.payload;
+    },
   },
 });
 
-export const { setFormData, setUserData } = counterSlice.actions;
+export const { setFormData, setUserData, setSignUpModal } =
+  counterSlice.actions;
 export const counterStates = (state) => state.counter;
 export default counterSlice.reducer;
