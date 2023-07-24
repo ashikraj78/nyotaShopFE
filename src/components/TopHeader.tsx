@@ -1,4 +1,4 @@
-import { counterStates, setSignUpModal } from "@/redux/counterReducer";
+import { counterStates, logoutUser, setSignUpModal } from "@/redux/counterReducer";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
@@ -8,6 +8,7 @@ import {MdOutlineCreateNewFolder} from "react-icons/md";
 import { FaRegUser } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import SingUpModal from "./SignUpModal";
+import { persistor } from "@/redux/store";
 
 function TopHeader() {
   const router = useRouter();
@@ -19,6 +20,12 @@ function TopHeader() {
       if(!userData){
         dispatch(setSignUpModal(true))
     }
+  }
+
+  function handleLogout(){
+    dispatch(logoutUser());
+    persistor.purge();
+    router.reload()
   }
 
   
@@ -76,7 +83,7 @@ function TopHeader() {
                     </div>
                   )}
                   
-                  <div className="flex  hover:bg-slate-200  cursor-pointer p-1 rounded items-center">
+                  <div className="flex  hover:bg-slate-200  cursor-pointer p-1 rounded items-center" onClick={handleLogout}>
                     <BiLogOut color="#7e223c" style={{ width: "20px", height: "20px" }} />
                     <p className="ml-2">Logout</p>
                   </div>

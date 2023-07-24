@@ -17,10 +17,11 @@ export const counterSlice = createSlice({
     setSignUpModal: (state, action) => {
       state.signUpModal = action.payload;
     },
+    logoutUser: (state) => state.initialState,
   },
 });
 
-export const { setFormData, setUserData, setSignUpModal } =
+export const { setFormData, setUserData, setSignUpModal, logoutUser } =
   counterSlice.actions;
 export const counterStates = (state) => state.counter;
 export default counterSlice.reducer;
