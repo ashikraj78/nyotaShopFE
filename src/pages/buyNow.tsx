@@ -11,12 +11,10 @@ function BuyNow(){
     const dispatch = useDispatch()
 
     const [isChecked, setIsChecked] = useState(false);
-    const [page, setPage] = useState<number>(1);
+    const [page, setPage] = useState<number>(4);
     const [relSide, setRelSide] = useState<string>("");
     const [addImage, setAddImage] = useState<boolean>(false);
-
     const {formData, userData} = useSelector(counterStates)
-
 
     interface PersonState {
         name?: string |null,
@@ -92,18 +90,17 @@ function BuyNow(){
           };
           reader.readAsArrayBuffer(file);
         });
-      };
+    };
 
-      function handleNextClick(){
-          dispatch(setFormData({...formData,  brideData: bride, groomData: groom, event1Data: event1, event2Data: event2}))
-      }
+    function handleNextClick(){
+        dispatch(setFormData({...formData,  brideData: bride, groomData: groom, event1Data: event1, event2Data: event2}))
+    }
 
-      function handleMakePayment(){
-          console.log("this is payment click")
-          if(!userData){
-              dispatch(setSignUpModal(true))
-          }
-      }
+    function handleMakePayment(){
+        if(!userData){
+            dispatch(setSignUpModal(true))
+        }
+    }
 
     return(
         <div>

@@ -12,7 +12,6 @@ function SingUpModal(){
     const[initialState, setInitialState] = useState("signup")
 
     function handleSingUp(){
-        console.log("this is signup")
         generateOTP();
     }
     const [otpForm, setOtpForm] = useState<boolean>(false)
