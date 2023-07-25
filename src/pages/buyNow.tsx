@@ -242,3 +242,4 @@ function BuyNow(){
 }
 
 export default BuyNow
+

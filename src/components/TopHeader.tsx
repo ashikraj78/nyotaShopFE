@@ -27,6 +27,9 @@ function TopHeader() {
     persistor.purge();
     router.reload()
   }
+  function handleProductClick(){
+    router.push("/product")
+  }
 
   
   return (
@@ -67,7 +70,7 @@ function TopHeader() {
             <FaRegUser color="#DDCEB8" style={{ width: "30px", height: "30px" }} onClick={()=> setUserBox(!userBox)} className="cursor-pointer" />
 
             {userBox && (
-                <div className="absolute bg-white py-2 px-4 right-1 top-10 w-36 rounded shadow">
+                <div className="absolute bg-white py-2 px-4 right-1 top-10 w-36 rounded shadow z-10">
                   <div className="flex  hover:bg-slate-200  cursor-pointer p-1 rounded items-center">
                     <BiShoppingBag color="#7e223c" style={{ width: "20px", height: "20px" }} />
                     <p className="ml-2">Orders</p>
@@ -77,7 +80,7 @@ function TopHeader() {
                     <p className="ml-2">Help Desk</p>
                   </div>
                   {userData?.user?.isAdmin && (
-                    <div className="flex  hover:bg-slate-200  cursor-pointer p-1 rounded items-center">
+                    <div className="flex  hover:bg-slate-200  cursor-pointer p-1 rounded items-center" onClick={handleProductClick}>
                       <MdOutlineCreateNewFolder color="#7e223c" style={{ width: "20px", height: "20px" }} />
                       <p className="ml-2">Product</p>
                     </div>

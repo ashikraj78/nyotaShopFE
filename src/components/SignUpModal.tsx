@@ -5,11 +5,14 @@ import { useDispatch, useSelector } from "react-redux";
 import 'react-phone-number-input/style.css'
 import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
 import Image from "next/image";
+import { MdOutlineKeyboardBackspace } from "react-icons/md";
 
 function SingUpModal(){
+
     const dispatch = useDispatch()
     const {signUpModal} = useSelector(counterStates)
     const[initialState, setInitialState] = useState("signup")
+    const backEndURI = process.env.NEXT_PUBLIC_SERVER_SIDE_URI
 
     function handleSingUp(){
         generateOTP();
@@ -47,7 +50,7 @@ function SingUpModal(){
         }
        
         try {
-          const response = await fetch("http://localhost:4000/user/generateOTP", {
+          const response = await fetch(`${backEndURI}/user/generateOTP`, {
             method: "POST",
             body: JSON.stringify(data),
             headers: {
@@ -61,10 +64,8 @@ function SingUpModal(){
           } else {
             setOtpForm(true);
           }
-    
           const responseData = await response.json();
-        //   setMobileNumber(responseData?.mobileNumber);
-        console.log({responseData})
+          setMobileNumber(responseData?.mobileNumber);
         } catch (error) {
           console.error(error);
         }
@@ -76,7 +77,7 @@ function SingUpModal(){
         }
 
         const endpoint = initialState === "signup" ? "createUser" : "loginUser";
-        const url = `http://localhost:4000/user/${endpoint}`;
+        const url = `${backEndURI}/user/${endpoint}`;
 
 
         try {
@@ -141,6 +142,7 @@ function SingUpModal(){
 
             {otpForm ? (
                 <div className="p-2">
+                    <MdOutlineKeyboardBackspace  style={{fontSize: "2em" }} className="cursor-pointer" onClick={()=> setOtpForm(false)} /> 
                     <div className="my-4">
                         <label htmlFor="name"> Enter OTP </label><br></br>
                         <input name="name" className="border" onChange={(e)=> setOtpValue(e.target.value)}></input> 
