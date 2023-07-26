@@ -65,7 +65,7 @@ function SingUpModal(){
             setOtpForm(true);
           }
           const responseData = await response.json();
-          setMobileNumber(responseData?.mobileNumber);
+        //   setMobileNumber(responseData?.mobileNumber);
         } catch (error) {
           console.error(error);
         }

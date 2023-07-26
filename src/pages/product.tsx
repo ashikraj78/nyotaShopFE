@@ -1,113 +1,55 @@
+import CreateProductForm from "@/components/CreateProductForm";
 import { counterStates } from "@/redux/counterReducer";
-import React from "react";
-
-import { useForm } from 'react-hook-form';
+import Image from "next/image";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
-
-
-
 function Product(){
-
+    const router = useRouter();
+    const [createForm, setCreateForm] = useState<boolean>(false)
     const {userData} = useSelector(counterStates)
-    const backEndURI = process.env.NEXT_PUBLIC_SERVER_SIDE_URI
-
-    interface FormValues {
-        title: string;
-        subTitle: string;
-        description: string;
-        category: string;
-        videoLink: string;
-        videoTheme: string;
-        musicTheme: string;
-        cost: number;
-        timeDuration: number;
-        photosRequired: boolean;
-      };
-
-    const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
-  
-  const onSubmit = async(data: FormValues) => {
-    const creatorId = userData?.user?._id
-    const finalData = {...data, creatorId}
-
-    try {
-        const response = await fetch(`${backEndURI}/product/createProduct`, {
-          method: "POST",
-          body: JSON.stringify(finalData),
-          headers: {
-            "Content-Type": "application/json",
-          },
-          mode: "cors",
-        });
-  
-        const responseData = await response.json();
-       console.log({responseData})
-      } catch (error) {
-        console.error(error);
-      }
-
-  };    
+    const productsData = userData?.user?.myProducts;
     return(
         <div className="mx-36 mt-20">
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="my-4">
-                    <input  className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-8  w-1/4"  {...register('title', { required: true })} placeholder="Title" />
-                    {errors.title && <span>This field is required</span>}
-                </div>
 
-                <div className="my-4">
-                    <input  className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-8  w-1/4" {...register('subTitle', { required: true })} placeholder="Sub Title" />
-                    {errors.subTitle && <span>This field is required</span>}
+            <div className="grid grid-cols-3 gap-4">
+                {productsData.map((product: {id: string, title: string, cost: number}) => (
+                <div 
+                    key={product.id} 
+                    className=" mx-10 mb-10 cursor-pointer" 
+                    onClick={()=> router.push("/videoDetails")}
+                >
+                    <Image
+                    src={"/nyota_explore1_image.svg"}
+                    width={420}
+                    height={420}
+                    alt="Design Explore"
+                    />
+                    <div className="flex justify-between mt-4">
+                    <p className="exploreTextColor text-lg">
+                        {product.title}
+                    </p>
+                    <p className="exploreTextColor text-xl">{product.cost}/-</p>
+                    </div>
+                    <p 
+                    className=" underline underline-offset-4 decoration-solid primaryTextColor cursor-pointer" 
+                    onClick={()=> router.push("/videoDetails")} 
+                    >
+                    View More
+                    </p>
+                    <div className="border border-slate-400 border-1 mt-4"></div>
+                    <div className="border border-slate-400 border-1 mt-1"></div>
                 </div>
+                ))}
+            </div>
 
-                <div className="my-4">
-                    <textarea  className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-8  w-1/4" {...register('description', { required: true })} placeholder="Description" />
-                    {errors.description && <span>This field is required</span>}
-                </div>
 
-                <div className="my-4">
-                    <input  className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-8  w-1/4" {...register('category', { required: true })} placeholder="Category" />
-                    {errors.category && <span>This field is required</span>}
-                </div>
-
-                <div className="my-4">
-                    <input className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-8  w-1/4" {...register('videoLink', { required: true })} placeholder="Video Link" />
-                    {errors.videoLink && <span>This field is required</span>}
-                </div>
-
-                <div className="my-4">
-                    <input className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-8  w-1/4" {...register('videoTheme', { required: true })} placeholder="Video Theme" />
-                    {errors.videoTheme && <span>This field is required</span>}
-                </div>
-
-                <div className="my-4">
-                    <input  className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-8  w-1/4" {...register('musicTheme', { required: true })} placeholder="Music Theme" />
-                    {errors.musicTheme && <span>This field is required</span>}
-                </div>
-
-                <div className="my-4">
-                    <input  className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-8  w-1/4" type="number" {...register('cost', { required: true })} placeholder="Cost" />
-                    {errors.cost && <span>This field is required</span>}
-                </div>
-
-                <div className="my-4">
-                    <input  className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-8  w-1/4" type="number" {...register('timeDuration', { required: true })} placeholder="Time Duration" />
-                    {errors.timeDuration && <span>This field is required</span>}
-                </div>
-
-                <div className="my-4 buy_inputPlaceholder text-xl pb-2 mb-8  w-1/4">
-                    <label>
-                    Photos Required:
-                    <input   type="checkbox" {...register('photosRequired', { required: true })} />
-                    </label>
-                    {errors.photosRequired && <span>This field is required</span>}
-                </div>
-
-                <div className="my-4">
-                    <input type="submit" className="border-2 px-4 py-2 rounded"/>
-                </div>
-            </form>
+           <button className="border text-3xl font-medium px-8 py-4 rounded" onClick={()=> setCreateForm(!createForm)}>Create Product + </button>
+           {createForm && (
+            <CreateProductForm />
+           )}
+           
         </div>
     )
     
