@@ -10,7 +10,7 @@ function VideoDetails() {
   
   return (
     <div>
-     <VideoInDetails title={""} subTitle={""} description={""} category={""} videoLink={""} videoTheme={""} musicTheme={""} cost={0} timeDuration={0} photosRequired={false} />
+     <VideoInDetails id={""} title={""} subTitle={""} description={""} category={""} videoLink={""} videoTheme={""} musicTheme={""} cost={0} timeDuration={0} photosRequired={false} />
       
       <div className="flex justify-center">
         <Image

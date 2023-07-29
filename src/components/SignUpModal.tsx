@@ -6,6 +6,8 @@ import 'react-phone-number-input/style.css'
 import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
 import Image from "next/image";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
+import {TbEdit} from "react-icons/tb";
+import OtpInput from 'react-otp-input';
 
 function SingUpModal(){
 
@@ -18,7 +20,7 @@ function SingUpModal(){
         generateOTP();
     }
     const [otpForm, setOtpForm] = useState<boolean>(false)
-    const [otpValue, setOtpValue] = useState<string | null>(null)
+    const [otpValue, setOtpValue] = useState<string>("")
     const [name, setName] = useState<string | null>(null)
     const [mobileNumber, setMobileNumber] = useState("");
     const [error, setError] = useState('');
@@ -71,6 +73,8 @@ function SingUpModal(){
         }
     };
     async function handleOTPSubmit(){
+
+        
         const data ={
             otp : otpValue, 
             mobilenumber: mobileNumber
@@ -115,79 +119,119 @@ function SingUpModal(){
             onCancel={() => dispatch(setSignUpModal(false))} 
             
         > 
-        <div className="flex ">
-            <div className=" primaryColor h-62 w-1/2 flex items-center justify-center  mr-2  ">
-                <Image
-                    src={"/nyota_logo.svg"}
-                    width={136}
-                    height={500}
-                    alt="Company logo"
-                    className="cursor-pointer"
-                />
-            </div>
-            <div>
-
-            <div className="flex justify-around">
-               
-                <p className={` ${initialState === "signup" ? "primaryTextColor font-bold border-b px-8 " : "cursor-pointer"}`}
-                    onClick={() => setInitialState("signup")} >
-                     Signup
-                </p>
-                <p className={` ${initialState === "login" ? "primaryTextColor font-bold border-b px-8 " : " cursor-pointer"}`}
-                    onClick={() => setInitialState("login")} >
-                     Login
-                </p>
-
-            </div>
-
-            {otpForm ? (
-                <div className="p-2">
-                    <MdOutlineKeyboardBackspace  style={{fontSize: "2em" }} className="cursor-pointer" onClick={()=> setOtpForm(false)} /> 
-                    <div className="my-4">
-                        <label htmlFor="name"> Enter OTP </label><br></br>
-                        <input name="name" className="border" onChange={(e)=> setOtpValue(e.target.value)}></input> 
-                    </div>
-                    
-                    <button className="border px-3 py-1 rounded cursor" onClick={handleOTPSubmit}>Submit</button>
-                </div>
-            ): (
-                <div className="p-2">
-
-                    {initialState == "signup" && (
-                        <div className="my-4">
-                            <label htmlFor="name"> Name</label><br></br>
-                            <input name="name" className="border" onChange={(e)=> setName(e.target.value)}></input> 
-                        </div>
-                    )}
-                    
-                    <div className="my-4">
-                        <label htmlFor="mobile"> Mobile Number</label><br></br>
-                        <PhoneInput
-                            defaultCountry="IN"
-                            value={mobileNumber}
-                            onChange={handlePhoneNumberChange}
-                            className="border"
+        <div className="p-10" >
+            {!otpForm && (
+                <div className="flex items-center justify-center">
+                    <div className=" primaryColor w-40 h-40 rounded-full border-8 flex items-center justify-center">
+                        <Image
+                            src={"/nyota_logo.svg"}
+                            width={120}
+                            height={500}
+                            alt="Company logo"
+                            className="cursor-pointer"
                         />
-                        {error && <p>{error}</p>}
                     </div>
-                
-                    <button className="border px-3 py-1 rounded cursor" onClick={handleSingUp}>
-                         {initialState === "signup" ? "Singup" : "Login" }
-                    </button>
-                   
                 </div>
             )}
+  
+           
+            <div>
+              
+                {otpForm ? (
+                    <div >
+                        <div>
+                            <p className="text-3xl text-center mb-4">Verify OTP</p>
+                            <div className="flex items-center justify-center">
+                                <p>6-digit OTP sent to {mobileNumber} </p>
+                                <TbEdit className="cursor-pointer ml-1 primaryTextColor"  
+                                onClick={()=>setOtpForm(false)}  />
+                            </div>
+                            
+                        </div>
+                        {/* <div className="my-4 text-center text-2xl mt-10">
+                            <input 
+                             name="name" 
+                             className="border-b border-dashed " 
+                             onChange={(e) => {
+                                setOtpValue(e.target.value); 
+                            }}
+                            maxLength={6} 
+                            
+                            ></input> 
+                        </div> */}
 
+                        <div className="flex justify-center mt-10">
+                            <OtpInput
+                                inputStyle={{ 
+                                    border: '1px solid #e9d1d8',
+                                    borderRadius: '5px',
+                                    fontSize: '32px' 
+                                }} 
+                                value={otpValue}
+                                onChange={setOtpValue}
+                                numInputs={6}
+                                renderSeparator={<span>-</span>}
+                                renderInput={(props) => <input {...props} />}
+                                
+                            />
+                        </div>
+                       
+                        
+                        <button className="border px-3 py-1 rounded cursor primaryColor text-white w-full mt-10 text-xl" onClick={handleOTPSubmit}>Submit</button>
+                    </div>
+                ): (
+                    <div>
+
+                        {initialState == "signup" && (
+                            <div className="mt-10">
+                                {/* <label htmlFor="name"> Name</label><br></br> */}
+                                <input name="name" className="border-b w-full phone-input text-xl px-2 " onChange={(e)=> setName(e.target.value)} placeholder="Name"></input> 
+                            </div>
+                        )}
+                        
+                        <div className="mt-10">
+                            {/* <label htmlFor="mobile" className="text-xl"> Mobile Number</label><br></br> */}
+                            <PhoneInput
+                                defaultCountry="IN"
+                                value={mobileNumber}
+                                onChange={handlePhoneNumberChange}
+                                className="border-b phone-input text-xl px-2"
+                                placeholder="Mobile Number"
+                            />
+                            {error && <p>{error}</p>}
+                        </div>
+                    
+                        <button className="border px-3 py-1 rounded cursor primaryColor text-white w-full mt-10 text-xl" onClick={handleSingUp}>
+                            {initialState === "signup" ? "Signup" : "Login" }
+                        </button>
+                        <small className="text-center block mt-2">By {initialState === "signup" ? "Signing" : "Loging" }  in, I agree to Terms and Conditions</small>
+                        
+
+
+                        <div className="text-center mt-6">
+                        
+                            
+
+                            {initialState === "signup" ? (
+                                <p className="cursor-pointer stateBorder inline-block "
+                                    onClick={() => setInitialState("login")} >
+                                    Already have an account ? <b>Login</b> 
+                                </p>
+                            ):(
+                                <p className="cursor-pointer stateBorder inline-block"
+                                    onClick={() => setInitialState("signup")} >
+                                    Dont have account ? <b>Signup</b> 
+                                </p>
+                            )}
+
+                            
+
+                    </div>
+                    
+                    </div>
+                )}
             </div>
-
-          
-
         </div>
-       
-       
-      
-
-
         </Modal>
     )
 }
