@@ -25,13 +25,15 @@ function TopHeader() {
   function handleLogout(){
     dispatch(logoutUser());
     persistor.purge();
-    router.reload()
-  }
-  function handleProductClick(){
-    router.push("/product")
+    setUserBox(false)
+    router.push("/").then(() => window.location.reload());
   }
 
-  
+  function handleProductClick(){
+    router.push("/product")
+    setUserBox(false)
+  }
+
   return (
     <div className="primaryColor w-full h-24 px-10 flex justify-between  ">
       <Image
