@@ -2,8 +2,44 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import React from "react";
 
-function VideoInDetails(){
+
+interface VideoInDetailsProps {
+    id: string;
+    title: string;
+    subTitle: string;
+    description: string;
+    category: string;
+    videoLink: string;
+    videoTheme: string;
+    musicTheme: string;
+    cost: number;
+    timeDuration: number;
+    photosRequired: boolean;
+  }
+
+function VideoInDetails(props: VideoInDetailsProps){
+    const {
+        id,
+        title, 
+        subTitle, 
+        description, 
+        category, 
+        videoLink, 
+        videoTheme, 
+        musicTheme, 
+        cost, 
+        timeDuration, 
+        photosRequired
+      } = props;
+
     const router = useRouter()
+
+    const handleBuyNow = () => {
+        router.push({
+          pathname: '/buyNow',
+          query: { id: id },
+        })
+      }
     return(
         <div className="mx-36 my-16 flex align-stretch">
             <Image
@@ -13,24 +49,23 @@ function VideoInDetails(){
             alt="Flower Br"
             className="videoWidth"
             />
-            <div className="children1 ml-16 pr-8 border-r flex flex-col justify-between" >
+            <div className="children1 ml-16 pr-8 border-r flex flex-col justify-between w-full" >
                 <div className="flex justify-between mb-8">
                     <div>
-                    <h3 className="thirdTextColor font-normal text-3xl ">Kalamkari Wedding Invites</h3>
-                    <p className="thirdTextColor font-light text-base mt-2">Subtle colours and soothing music </p>
+                    <h3 className="thirdTextColor font-normal text-3xl ">{title||"Kalamkari Wedding Invites"}</h3>
+                    <p className="thirdTextColor font-light text-base mt-2">{subTitle||"Subtle colours and soothing music"} </p>
                     </div>
-                    <p className="text-2xl font-black thirdTextColor">2500/-</p>
+                    <p className="text-2xl font-black thirdTextColor">{cost||2500}/-</p>
                 </div>
                 <div className="flex my-8">
                     <p className="thirdTextColor w-4/12 border-b text-center text-xl py-2 font-black">Description</p>
                     <p className="thirdTextColor w-4/12 border-b border-l border-r text-center text-xl py-2 font-light">Features</p>
                     <p className="thirdTextColor w-4/12 border-b text-center text-xl py-2 font-light">Process</p>
                 </div>
-                <p className="text-base font-light thirdTextColor ">Subtle colours and soothing music makes this rhythmic wedding invitation a true classic. Buy this soft video personalised with your photos, text and       religious theme. It can be customised to include all the functions of your wedding.
-                    Subtle colours and soothing music makes this rhythmic wedding invitation a true classic. Buy this soft video personalised with your photos, text and religious theme. It can be customised to include all the functions of your wedding.
-                    Subtle colours and soothing music makes this rhythmic wedding invitation a true classic. Buy this soft video personalised with your photos, text and religious theme. It can be customised to include all the functions of your wedding.
+                <p className="text-base font-light thirdTextColor ">{description||"Subtle colours and soothing music makes this rhythmic wedding invitation a true classic. Buy this soft video personalised with your photos, text and religious theme. It can be customised to include all the functions of your wedding. Subtle colours and soothing music makes this rhythmic wedding invitation a true classic. Buy this soft video personalised with your photos, text and religious theme. It can be customised to include all the functions of your wedding."}
+                    
                 </p>
-                <button className="h-12 w-full primaryColor py-auto text-xl secondaryTextColor mt-12 " onClick={()=> router.push("/buyNow")} >Buy Now</button>
+                <button className="h-12 w-full primaryColor py-auto text-xl secondaryTextColor mt-12 " onClick={handleBuyNow} >Buy Now</button>
             </div>
             <div className="children2 flex flex-col justify-between ml-6">
                 <div className="flex flex-col items-center w-24">
@@ -41,7 +76,7 @@ function VideoInDetails(){
                     </svg>
                     </div>
                     
-                    <p className="font-light text-base">120 Sec</p>
+                    <p className="font-light text-base">{timeDuration||120} Sec</p>
                     <p className="text-xs font-light">Duration</p>
                 </div>
 
@@ -52,7 +87,7 @@ function VideoInDetails(){
                     </svg>
                     </div>
                     
-                    <p className="font-light text-base">Indian</p>
+                    <p className="font-light text-base">{videoTheme||"Indian"}</p>
                     <p className="text-xs font-light">Theme</p>
                 </div>
 
@@ -64,7 +99,7 @@ function VideoInDetails(){
                     </svg>
                     </div>
                     
-                    <p className="font-light text-base">Traditional</p>
+                    <p className="font-light text-base">{musicTheme||"Traditional"}</p>
                     <p className="text-xs font-light">Music</p>
                 </div>
 

@@ -1,20 +1,49 @@
 import Image from "next/image";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, use, useEffect, useState } from "react";
 import BuyProcess from "@/components/BuyProcess";
 import { Switch } from 'antd';
 import ImageUploader from "@/components/ImageUploader";
 import { useDispatch, useSelector } from "react-redux";
 import { counterStates, setFormData, setSignUpModal } from "@/redux/counterReducer";
 import SingUpModal from "@/components/SignUpModal";
+import { useRouter } from "next/router";
+import { paymentService } from "@/services";
+
+declare global {
+    interface Window {
+      Razorpay: new (options: any) => any;
+    }
+}
+  
 
 function BuyNow(){
     const dispatch = useDispatch()
+    const router = useRouter()
+    const [product, setProduct] = useState<Product>({} as Product);
+    const { id } = router.query
+    const backEndURI = process.env.NEXT_PUBLIC_SERVER_SIDE_URI;
+
+    useEffect(() => {
+        const fetchProduct = async () => {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_SIDE_URI}/product/showProduct?id=${id}`);
+          const productData = await res.json();
+          setProduct(productData);
+        }
+    
+        if (id) { // Check if id is not null or undefined
+          fetchProduct();
+        }
+      }, [id]);
+    // const res = await fetch(`${backEndURI}/product/showProduct?id=${id}`);
 
     const [isChecked, setIsChecked] = useState(false);
-    const [page, setPage] = useState<number>(4);
+    const [page, setPage] = useState<number>(1);
     const [relSide, setRelSide] = useState<string>("");
     const [addImage, setAddImage] = useState<boolean>(false);
     const {formData, userData} = useSelector(counterStates)
+    const [paidAmount,setPaidAmount] = useState<number | null>(null)
+    const [razorPayPaymentId,setRazorPayPaymentId] = useState<string | null>(null)
+    const [formDataId, setFormDataId] = useState(null)
 
     interface PersonState {
         name?: string |null,
@@ -29,8 +58,21 @@ function BuyNow(){
         time?: string | null,
         date?: string | null
     }
+    interface Product {
+        _id: string;
+         title: string;
+        subTitle: string;
+        description: string;
+        category: string;
+        videoLink: string;
+        videoTheme: string;
+        musicTheme: string;
+        cost: number;
+        timeDuration: number;
+        photosRequired: boolean;
+    }
 
-
+ 
     const initialPersonState : PersonState ={
         name: null,
         motherName: null,
@@ -45,6 +87,7 @@ function BuyNow(){
         time:  null,
         date:  null
     }
+    
 
     const [bride, setBride] = useState<PersonState>(formData?.brideData || initialPersonState);
 
@@ -93,12 +136,128 @@ function BuyNow(){
     };
 
     function handleNextClick(){
-        dispatch(setFormData({...formData,  brideData: bride, groomData: groom, event1Data: event1, event2Data: event2}))
+        dispatch(setFormData({...formData,productId:id,  brideData: bride, groomData: groom, eventsData:[event1,event2]}))
     }
+
+
+    useEffect(() => {
+        // Check if both the payment ID and the paid amount have been set
+        if (razorPayPaymentId !== null && paidAmount !== null) {
+          createProductOrder();
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [razorPayPaymentId, paidAmount]);
+
+   
+
+
+
+    async function handlePayment() {
+        function loadScript(src:string) {
+          return new Promise((resolve) => {
+            const script = document.createElement("script");
+            script.src = src;
+            script.onload = () => {
+              resolve(true);
+            };
+            script.onerror = () => {
+              resolve(false);
+            };
+            document.body.appendChild(script);
+          });
+        }
+        async function displayRazorPay() {
+          const res = await loadScript(
+            "https://checkout.razorpay.com/v1/checkout.js"
+          );
+          if (!res) {
+            return;
+          }
+          let data = {
+            amount: product?.cost,
+            currency: "INR",
+          };
+          const result = await paymentService.createSession(data);
+          const { amount, id: order_id, currency } = result;
+          const options = {
+            key: "rzp_test_KalvucdlwmjOEd",
+            amount: amount,
+            currency: currency,
+            name: "Nyota",
+            description: " Nyota Test Transaction",
+            image: "https://via.placeholder.com/150",
+            order_id: order_id,
+            handler: async (response:any) => {
+              const responseData = {
+                orderId: order_id,
+                paymentId: response.razorpay_payment_id,
+                signature: response.razorpay_signature,
+              };
+              const verifiedResponse = await paymentService.verifyPayment(
+                responseData
+              );
+              setRazorPayPaymentId(verifiedResponse.id);
+              setPaidAmount(verifiedResponse.amount / 100);
+            },
+            prefill: {
+              name: "Ashik Raj",
+              email: "ashikraj.78@gmail.com",
+              contact: "8989047460",
+            },
+            notes: {
+              address: "Dharamshala Alt Campus",
+            },
+            theme: {
+              color: "#F37254",
+            },
+          };
+          const rzp1 = new window.Razorpay(options);
+          rzp1.open();
+        }
+        displayRazorPay();
+    }
+
+    async function createProductOrder(){
+
+        const data = {userId: userData?.user?._id, productId:id, formDataId: formDataId, razorPayPaymentId:razorPayPaymentId, paidAmount:paidAmount }
+
+        const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_SIDE_URI}/order/createOrder`, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {
+              "Content-Type": "application/json",
+            },
+            mode: "cors",
+          });
+          const productOrder = await res.json();
+          console.log({productOrder})
+
+    }
+
+    async function createFormData() {
+        const data = {...formData, userId: userData?.user?._id}
+
+        const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_SIDE_URI}/formData/createFormData`, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {
+              "Content-Type": "application/json",
+            },
+            mode: "cors",
+          });
+          const productData = await res.json();
+          setFormDataId(productData?._id)
+        
+    }
+
 
     function handleMakePayment(){
         if(!userData){
             dispatch(setSignUpModal(true))
+        }else{
+            createFormData().then(()=>{
+                handlePayment()
+            })
         }
     }
 
@@ -212,7 +371,7 @@ function BuyNow(){
            )}
            {page === 4 && (
                <div className="text-center mt-20 mb-10">
-                   <button className="w-56 buyProcessBorder py-4  text-xl font-normal primaryColor text-white ml-8" onClick={handleMakePayment}>Make Payment</button>
+                   <button className="w-56 buyProcessBorder py-4  text-xl font-normal primaryColor text-white ml-8" onClick={handleMakePayment}>Pay   ₹{product?.cost}</button>
                </div>
            )}
            <SingUpModal />

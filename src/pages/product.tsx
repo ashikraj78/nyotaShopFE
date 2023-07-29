@@ -14,12 +14,13 @@ function Product(){
         <div className="mx-36 mt-20">
 
             <div className="grid grid-cols-3 gap-4">
-                {productsData.map((product: {id: string, title: string, cost: number}) => (
+                {productsData.map((product: {_id: string, title: string, cost: number}) => (
                 <div 
-                    key={product.id} 
+                    key={product._id} 
                     className=" mx-10 mb-10 cursor-pointer" 
-                    onClick={()=> router.push("/videoDetails")}
+                    onClick={()=> router.push(`/product/${product._id}`)}
                 >
+                    
                     <Image
                     src={"/nyota_explore1_image.svg"}
                     width={420}
