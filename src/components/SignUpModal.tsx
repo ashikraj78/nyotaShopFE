@@ -148,17 +148,6 @@ function SingUpModal(){
                             </div>
                             
                         </div>
-                        {/* <div className="my-4 text-center text-2xl mt-10">
-                            <input 
-                             name="name" 
-                             className="border-b border-dashed " 
-                             onChange={(e) => {
-                                setOtpValue(e.target.value); 
-                            }}
-                            maxLength={6} 
-                            
-                            ></input> 
-                        </div> */}
 
                         <div className="flex justify-center mt-10">
                             <OtpInput

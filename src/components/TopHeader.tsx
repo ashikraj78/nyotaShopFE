@@ -34,6 +34,11 @@ function TopHeader() {
     setUserBox(false)
   }
 
+  function handleOrderClick(){
+    router.push("/order")
+    setUserBox(false)
+  }
+
   return (
     <div className="primaryColor w-full h-24 px-10 flex justify-between  ">
       <Image
@@ -73,7 +78,7 @@ function TopHeader() {
 
             {userBox && (
                 <div className="absolute bg-white py-2 px-4 right-1 top-10 w-36 rounded shadow z-10">
-                  <div className="flex  hover:bg-slate-200  cursor-pointer p-1 rounded items-center">
+                  <div className="flex  hover:bg-slate-200  cursor-pointer p-1 rounded items-center" onClick={handleOrderClick}>
                     <BiShoppingBag color="#7e223c" style={{ width: "20px", height: "20px" }} />
                     <p className="ml-2">Orders</p>
                   </div>

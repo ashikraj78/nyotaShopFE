@@ -4,10 +4,11 @@ import BuyProcess from "@/components/BuyProcess";
 import { Switch } from 'antd';
 import ImageUploader from "@/components/ImageUploader";
 import { useDispatch, useSelector } from "react-redux";
-import { counterStates, setFormData, setSignUpModal } from "@/redux/counterReducer";
+import { counterStates, setFormData, setSignUpModal, setThankModal, setUserData } from "@/redux/counterReducer";
 import SingUpModal from "@/components/SignUpModal";
 import { useRouter } from "next/router";
 import { paymentService } from "@/services";
+import ThankModal from "@/components/ThankModal";
 
 declare global {
     interface Window {
@@ -43,7 +44,8 @@ function BuyNow(){
     const {formData, userData} = useSelector(counterStates)
     const [paidAmount,setPaidAmount] = useState<number | null>(null)
     const [razorPayPaymentId,setRazorPayPaymentId] = useState<string | null>(null)
-    const [formDataId, setFormDataId] = useState(null)
+    const [formDataId, setFormDataId] = useState(null);
+    const [isPayButtonClicked, setPayButtonClicked] = useState<boolean>(false);
 
     interface PersonState {
         name?: string |null,
@@ -228,9 +230,23 @@ function BuyNow(){
               "Content-Type": "application/json",
             },
             mode: "cors",
-          });
-          const productOrder = await res.json();
-          console.log({productOrder})
+        });
+        const productOrder = await res.json();
+        dispatch(setThankModal(true))    
+
+
+        const  newUserResponse =  await fetch(`${backEndURI}/user/showUser?id=${userData?.user?._id}`, {
+            method: "GET",
+            headers: {
+            "Content-Type": "application/json",
+            },
+            mode: "cors",
+        });
+        const newUserData = await newUserResponse.json()
+        dispatch(setUserData({...userData, user: newUserData?.user}))
+
+        router.push("/order")
+
 
     }
 
@@ -252,6 +268,7 @@ function BuyNow(){
 
 
     function handleMakePayment(){
+        setPayButtonClicked(true)
         if(!userData){
             dispatch(setSignUpModal(true))
         }else{
@@ -371,10 +388,17 @@ function BuyNow(){
            )}
            {page === 4 && (
                <div className="text-center mt-20 mb-10">
-                   <button className="w-56 buyProcessBorder py-4  text-xl font-normal primaryColor text-white ml-8" onClick={handleMakePayment}>Pay   ₹{product?.cost}</button>
+                   <button 
+                        className="w-56 buyProcessBorder py-4  text-xl font-normal primaryColor text-white ml-8" 
+                        onClick={handleMakePayment}
+                        disabled={isPayButtonClicked} 
+                    >
+                        {isPayButtonClicked ? "Please Wait ...." : `Pay ₹${product?.cost}`}
+                    </button>
                </div>
            )}
            <SingUpModal />
+           <ThankModal />
            <div className="text-center mt-20 mb-10">
                 <button className={`w-56 buyProcessBorder py-4 text-xl font-normal primaryTextColor mr-8 ${page < 2 ? 'opacity-20' : ''}`}
                                 onClick={() => setPage(page - 1)}
