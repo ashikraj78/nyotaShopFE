@@ -30,7 +30,7 @@ function TopHeader() {
   }
 
   function handleProductClick(){
-    router.push("/product")
+    router.push("/dashboard")
     setUserBox(false)
   }
 
@@ -89,7 +89,7 @@ function TopHeader() {
                   {userData?.user?.isAdmin && (
                     <div className="flex  hover:bg-slate-200  cursor-pointer p-1 rounded items-center" onClick={handleProductClick}>
                       <MdOutlineCreateNewFolder color="#7e223c" style={{ width: "20px", height: "20px" }} />
-                      <p className="ml-2">Product</p>
+                      <p className="ml-2">Dashboard</p>
                     </div>
                   )}
                   
