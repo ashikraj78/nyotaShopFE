@@ -12,6 +12,7 @@ function Order(){
         paidAmount: number;
         productId: {
           title: string;
+          videoLink:string;
         };
     }
 
@@ -54,7 +55,7 @@ function Order(){
         const year = date.getFullYear();
         
         return `${day} ${monthName} ${year}`;
-      }
+    }
 
     return(
         <div className="mx-36 mt-20">

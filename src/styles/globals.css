@@ -32,6 +32,9 @@ body {
 .primaryTextColor {
   color: #7e223c;
 }
+.textHover :hover {
+  color: #7e223c;
+}
 .secondaryColor {
   background: #c8a574;
 }
