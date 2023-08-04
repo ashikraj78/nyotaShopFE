@@ -1,7 +1,9 @@
 import Image from "next/image";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
 function OderDashboard(){
+    const router = useRouter()
 
     interface Order {
         _id: string;
@@ -67,7 +69,7 @@ function OderDashboard(){
 
             {ordersData ?  ordersData?.map((order:Order) =>
                 (
-                <div className=" box-border" key={order._id}>
+            <div className=" box-border " key={order._id} onClick={()=> router.push(`/order/${order._id}`)}>
                 <div className="flex border p-6 rounded-md shadow-md mb-4">
                     <div className="mr-10">
                         <Image

@@ -17,7 +17,7 @@ interface Product {
     cost: number;
     timeDuration: number;
     photosRequired: boolean;
-  }
+}
   
   // Define the type for the props
   interface ProductProps {
