@@ -9,6 +9,7 @@ import SingUpModal from "@/components/SignUpModal";
 import { useRouter } from "next/router";
 import { paymentService } from "@/services";
 import ThankModal from "@/components/ThankModal";
+import {RiDeleteBin5Line} from "react-icons/ri"
 
 declare global {
     interface Window {
@@ -46,6 +47,7 @@ function BuyNow(){
     const [razorPayPaymentId,setRazorPayPaymentId] = useState<string | null>(null)
     const [formDataId, setFormDataId] = useState(null);
     const [isPayButtonClicked, setPayButtonClicked] = useState<boolean>(false);
+    const reduxStoredEvents = formData?.eventsData
 
     interface PersonState {
         name?: string |null,
@@ -58,7 +60,8 @@ function BuyNow(){
         title?: string | null,
         venue?: string | null,
         time?: string | null,
-        date?: string | null
+        date?: string | null,
+        [key: string]: string | undefined | null,
     }
     interface Product {
         _id: string;
@@ -90,13 +93,32 @@ function BuyNow(){
         date:  null
     }
     
-
     const [bride, setBride] = useState<PersonState>(formData?.brideData || initialPersonState);
-
-    
     const [groom, setGroom] = useState<PersonState>(formData?.groomData || initialPersonState);
-    const [event1, setEvent1] = useState<EventState>(formData?.event1Data || initialEventState)
-    const [event2, setEvent2] = useState<EventState>(formData?.event2Data || initialEventState)
+    const [events, setEvents] = useState<EventState[]>(reduxStoredEvents||[initialEventState]);
+
+
+
+
+    const handleEventChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
+
+        const newEvents = [...events];
+        const newEvent = {...newEvents[index]}; // clone the event object
+        newEvent[event.target.id] = event.target.value;
+        newEvents[index] = newEvent; // replace the original event object with the updated one
+        setEvents(newEvents);
+    }
+
+    const addEvent = () => {
+        setEvents([...events, initialEventState]);
+    }
+    const handleEventDelete = (index:number)=>{
+        const newEvents = [...events];
+        newEvents.splice(index, 1);
+        setEvents(newEvents);
+    }
+
+
 
     const handleBrideChange = (e: ChangeEvent<HTMLInputElement>) => {
         setBride({
@@ -110,18 +132,12 @@ function BuyNow(){
             [e.target.name]: e.target.value
         })
     };
-    const handleEvent1Change = (e: ChangeEvent<HTMLInputElement>) =>{
-        setEvent1({
-            ...event1,
-            [e.target.id] : e.target.value
-        })
-    }
-    const handleEvent2Change = (e: ChangeEvent<HTMLInputElement>) =>{
-        setEvent2({
-            ...event2,
-            [e.target.id] : e.target.value
-        })
-    }
+
+
+   
+   
+
+
     const handleDrop = (acceptedFiles: File[]) => {
         console.log(acceptedFiles);
         // Handle the images.
@@ -138,7 +154,7 @@ function BuyNow(){
     };
 
     function handleNextClick(){
-        dispatch(setFormData({...formData,productId:id,  brideData: bride, groomData: groom, eventsData:[event1,event2]}))
+        dispatch(setFormData({...formData,productId:id,  brideData: bride, groomData: groom, eventsData:events}))
     }
 
 
@@ -310,60 +326,48 @@ function BuyNow(){
                     </div>
                 </div>
            </div>
-           )}
-           {page === 2 && (
-            <div className="mx-36 mt-20">
-                <div className="mt-12 primaryTextColor ">
-                    <p className="text-xl font-extrabold mb-10">Event 1</p>
-                    <div className="grid grid-cols-3 gap-4">
-                        <div>
-                            <label htmlFor="title" className="block opacity-60">Title *</label>
-                            <input id="title" type="text" placeholder="Event Title" className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-6 w-3/4" onChange={handleEvent1Change} value={event1?.title || ""} />
-                        </div>
-                        
-                        <div>
-                            <label htmlFor="venue" className="block opacity-60">Venue *</label>
-                            <input id="venue" type="text" placeholder="Venue Address" className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-6 w-3/4" onChange={handleEvent1Change} value={event1?.venue || ""} />
-                        </div>
-                        <div>
-                            <label htmlFor="timeInput" className="block opacity-60">Time *</label>
-                            <input id="time" type="time" className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-6 w-3/4" onChange={handleEvent1Change} value={event1?.time || ""} />
-                        </div>
-                        <div>
-                            <label htmlFor="date" className="block opacity-60">Date *</label>
-                            <input id="date" type="date" className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-6 w-3/4" onChange={handleEvent1Change} value={event1?.date || ""} />
-                        </div>
-                    </div>
-                </div>
-                <div className="mt-12 primaryTextColor ">
-                    <p className="text-xl font-extrabold mb-10">Event 2</p>
-                    <div className="grid grid-cols-3 gap-4">
-                    <div>
-                            <label htmlFor="title" className="block opacity-60">Title *</label>
-                            <input id="title" type="text" placeholder="Event Title" className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-6 w-3/4" onChange={handleEvent2Change} value={event2?.title || ""} />
-                        </div>
-                        
-                        <div>
-                            <label htmlFor="venue" className="block opacity-60">Venue *</label>
-                            <input id="venue" type="text" placeholder="Venue Address" className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-6 w-3/4" onChange={handleEvent2Change} value={event2?.venue || ""} />
-                        </div>
-                        <div>
-                            <label htmlFor="timeInput" className="block opacity-60">Time *</label>
-                            <input id="time" type="time" className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-6 w-3/4" onChange={handleEvent2Change} value={event2?.time || ""} />
-                        </div>
-                        <div>
-                            <label htmlFor="date" className="block opacity-60">Date *</label>
-                            <input id="date" type="date" className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-6 w-3/4" onChange={handleEvent2Change} value={event2?.date || ""} />
-                        </div>
-                    </div>
-                </div>
-                <div className=" mt-12  flex w-44 border justify-center items-center py-3 primaryColor cursor-pointer">
-                    <p className="text-xl font-normal text-white">Add Event</p>
-                    <div className="border rounded-full w-6 h-6  flex justify-center items-center ml-7 bg-white primaryTextColor">+</div>
-                </div>
-           </div>
-           )}
-           {page === 3 && (
+        )}
+        {page === 2 && (
+                 <div className="mx-36 mt-20">
+                 {events.map((event, index:number) => (
+                     <div key={index} className="mt-12 primaryTextColor ">
+                         <div className="flex">
+                                 <p className="text-xl font-extrabold mb-10 mr-4">Event {index + 1}</p>
+                                 {index >0 && (
+                                 <RiDeleteBin5Line className="cursor-pointer" onClick={()=> handleEventDelete(index)} />
+                                 )}
+                         </div>
+                         
+                         <div className="grid grid-cols-3 gap-4">
+                             <div>
+                                 <label htmlFor={`title${index}`} className="block opacity-60">Title *</label>
+                                 <input id="title"  type="text" placeholder="Event Title" className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-6 w-3/4" onChange={(e) => handleEventChange(index, e)} value={event.title || ""} />
+                             </div>
+                             <div>
+                                 <label htmlFor={`venue${index}`} className="block opacity-60">Venue *</label>
+                                 <input id="venue" type="text" placeholder="Venue Address" className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-6 w-3/4" onChange={(e) => handleEventChange(index, e)} value={event.venue || ""} />
+                             </div>
+                             <div>
+                                 <label htmlFor={`time${index}`} className="block opacity-60">Time *</label>
+                                 <input id="time" type="time" className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-6 w-3/4" onChange={(e) => handleEventChange(index, e)} value={event.time || ""} />
+                             </div>
+                             <div>
+                                 <label htmlFor={`date${index}`} className="block opacity-60">Date *</label>
+                                 <input id="date" type="date" className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-6 w-3/4" onChange={(e) => handleEventChange(index, e)} value={event.date || ""} />
+                             </div>
+                         </div>
+                     </div>
+                 ))}
+                 <div className=" mt-12  flex w-44 border justify-center items-center py-3 primaryColor cursor-pointer" onClick={addEvent}>
+                     <p className="text-xl font-normal text-white">Add Event</p>
+                     <div className="border rounded-full w-6 h-6  flex justify-center items-center ml-7 bg-white primaryTextColor">+</div>
+                 </div>
+             </div>            
+
+
+          
+        )}
+        {page === 3 && (
                 <div className="mx-36 mt-20">
                     <div className="mt-12 primaryTextColor flex ">
                         <p className="text-xl font-extrabold mb-10 mr-10">Upload Photos</p>
