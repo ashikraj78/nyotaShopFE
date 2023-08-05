@@ -1,5 +1,5 @@
 import {  GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next";
-import React from "react";
+import React, { useState } from "react";
 
 interface User {
     _id: string;
@@ -80,6 +80,27 @@ const OrderPage : NextPage<OrderProps> = ({order}) =>{
         return `${day} ${monthName} ${year}`;
     }
 
+    const [orderStatusValue, setOrderStatusValue] = useState<Order['orderStatus']>(orderStatus||'Received');
+
+
+    async function handleOrderStatusChange(value: string) {
+        // update the order status
+        setOrderStatusValue(value as Order['orderStatus']);
+
+        let orderInfo = {orderStatus : value}
+
+        await fetch(`${process.env.NEXT_PUBLIC_SERVER_SIDE_URI}/order/updateOrder?id=${_id}`, {
+            method: "PUT",
+            body: JSON.stringify(orderInfo),
+            headers: {
+              "Content-Type": "application/json",
+            },
+            mode: "cors",
+        });
+
+    }
+    
+
 
 
 
@@ -88,10 +109,21 @@ const OrderPage : NextPage<OrderProps> = ({order}) =>{
             <p>this is order details page</p>
             <div className="border-b-4 mb-6 pb-3">
                 <p className="text-2xl">Order </p>
+
                 <div className="flex">
                     <p>Order Status : </p>
-                    <p className="ml-2">{orderStatus}</p>
+                    <select 
+                        className="ml-2" 
+                        value={orderStatusValue} 
+                        onChange={(e) => handleOrderStatusChange(e.target.value)}
+                    >
+                        <option value="Received">Received</option>
+                        <option value="InProgress">In Progress</option>
+                        <option value="Delivered">Delivered</option>
+                    </select>
                 </div>
+
+
                 <div className="flex justify-between">
                 {createdAt ? (
                     <>

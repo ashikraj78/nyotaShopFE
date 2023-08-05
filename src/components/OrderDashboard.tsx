@@ -69,64 +69,63 @@ function OderDashboard(){
 
             {ordersData ?  ordersData?.map((order:Order) =>
                 (
-            <div className=" box-border " key={order._id} onClick={()=> router.push(`/order/${order._id}`)}>
-                <div className="flex border p-6 rounded-md shadow-md mb-4">
-                    <div className="mr-10">
-                        <Image
-                            src={"/nyota_explore1_image.svg"}
-                            width={300}
-                            height={300}
-                            alt="Design Explore"
-                        />
+                    <div className=" box-border " key={order._id} onClick={()=> router.push(`/order/${order._id}`)}>
+                        <div className="flex  border p-6 rounded-md shadow-md mb-4 ">
+                            <div className="mr-10">
+                                <Image
+                                    src={"/nyota_explore1_image.svg"}
+                                    width={300}
+                                    height={300}
+                                    alt="Design Explore"
+                                />
+                            </div>
+                            <div className="w-full grid gap-4">
+                                <div className="grid grid-cols-3 border-b">
+                                    <p className="text-xl pb-2 col-span-3">Order Id : {order._id}</p>
+                                </div>
+
+                                <div className="grid grid-cols-3 border-b">
+                                    <div className="text-sm">
+                                        <p className="text-gray-500">Order Date</p>
+                                        <p>{formatDate(order?.createdAt)}</p>
+                                    </div>
+                                    <div className="text-sm">
+                                        <p className="text-gray-500">Client Name</p>
+                                        <p>{order?.userId?.name || "No Name"}</p>
+                                    </div>
+                                    <div className="text-sm">
+                                        <p className="text-gray-500">Payment Id</p>
+                                        <p>{order?.razorPayPaymentId}</p>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-3 border-b">
+                                    <div className="text-sm">
+                                        <p className="text-gray-500">Information</p>
+                                        <a className="underline underline-offset-4 text-blue-700 cursor-pointer">Download</a>
+                                    </div>
+                                    <div className="text-sm">
+                                        <p className="text-gray-500">Photos</p>
+                                        <a className="underline underline-offset-4 text-blue-700 cursor-pointer">Download</a>
+                                    </div>
+                                    <div className="text-sm">
+                                        <p className="text-gray-500">Last date for Submission</p>
+                                        <p className="text-red-700">{addDays(order?.createdAt, 4)}</p>
+                                    </div>
+                                </div>
+                                <div className="flex justify-between">
+                                    <button className="border bg-gray-400 rounded-md px-6 py-2 text-white">Upload</button>
+                                    
+                                    <button className={`border rounded-md px-6 py-2 text-white ${order.orderStatus === 'Received' ? 'bg-purple-400' : order.orderStatus === 'InProgress' ? 'bg-orange-400' : 'bg-green-400'}`}>
+                                    {order.orderStatus}
+                                    </button>
+
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
-                    <div className="w-full grid gap-4">
-                        <div className="grid grid-cols-3 border-b">
-                            <p className="text-xl pb-2 col-span-3">Order Id : {order._id}</p>
-                        </div>
-
-                        <div className="grid grid-cols-3 border-b">
-                            <div className="text-sm">
-                                <p className="text-gray-500">Order Date</p>
-                                <p>{formatDate(order?.createdAt)}</p>
-                            </div>
-                            <div className="text-sm">
-                                <p className="text-gray-500">Client Name</p>
-                                <p>{order?.userId?.name || "No Name"}</p>
-                            </div>
-                            <div className="text-sm">
-                                <p className="text-gray-500">Payment Id</p>
-                                <p>{order?.razorPayPaymentId}</p>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-3 border-b">
-                            <div className="text-sm">
-                                <p className="text-gray-500">Information</p>
-                                <a className="underline underline-offset-4 text-blue-700 cursor-pointer">Download</a>
-                            </div>
-                            <div className="text-sm">
-                                <p className="text-gray-500">Photos</p>
-                                <a className="underline underline-offset-4 text-blue-700 cursor-pointer">Download</a>
-                            </div>
-                            <div className="text-sm">
-                                <p className="text-gray-500">Last date for Submission</p>
-                                <p className="text-red-700">{addDays(order?.createdAt, 4)}</p>
-                            </div>
-                        </div>
-                        <div className="flex justify-between">
-                            <button className="border bg-gray-400 rounded-md px-6 py-2 text-white">Upload</button>
-                            
-                            <button className={`border rounded-md px-6 py-2 text-white ${order.orderStatus === 'Received' ? 'bg-purple-400' : order.orderStatus === 'InProgress' ? 'bg-orange-400' : 'bg-green-400'}`}>
-                            {order.orderStatus}
-                            </button>
-
-                        </div>
-                    </div>
-
-                </div>
-                
-                
-            </div>)
+                )
                 ) 
                 :(
                 <p>please wait ...</p>
