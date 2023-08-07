@@ -1,11 +1,12 @@
 const {Modal} = require("antd")
 import { counterStates, setSignUpModal, setUserData } from "@/redux/counterReducer";
-import React, { useEffect, useState } from "react"
+import React, { use, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux";
 import 'react-phone-number-input/style.css'
 import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
 import Image from "next/image";
-import { MdOutlineKeyboardBackspace } from "react-icons/md";
+import {ImSpinner } from "react-icons/im";
+
 import {TbEdit} from "react-icons/tb";
 import OtpInput from 'react-otp-input';
 
@@ -15,18 +16,30 @@ function SingUpModal(){
     const {signUpModal} = useSelector(counterStates)
     const[initialState, setInitialState] = useState("signup")
     const backEndURI = process.env.NEXT_PUBLIC_SERVER_SIDE_URI
-
-    function handleSingUp(){
-        generateOTP();
-    }
     const [otpForm, setOtpForm] = useState<boolean>(false)
     const [otpValue, setOtpValue] = useState<string>("")
     const [name, setName] = useState<string | null>(null)
     const [mobileNumber, setMobileNumber] = useState("");
     const [error, setError] = useState('');
+    const [disableButton, setDisableButton] = useState<boolean>(true)
+    const [validatingOtp, setValidationgOtp] = useState<boolean>(false)
+    const [otpError, setOtpError] = useState<string | null>(null)
+    const [temporaryUserId, setTemporaryUserId]= useState<string | null>(null)
     const handlePhoneNumberChange = (phoneNumber: string) =>{
         setMobileNumber(phoneNumber);
     }
+    function handleSingUp(){        
+        generateOTP();
+    }
+
+    useEffect(()=>{
+        if(initialState == "signup" && mobileNumber?.length == 13 && name){
+            setDisableButton(false)
+        }
+        if(initialState !== "signup" && mobileNumber?.length == 13){
+            setDisableButton(false)
+        }
+    },[name, mobileNumber, initialState])
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -48,7 +61,8 @@ function SingUpModal(){
 
         const data ={
             name : name, 
-            mobilenumber: mobileNumber
+            mobilenumber: mobileNumber,
+            otpForm: initialState
         }
        
         try {
@@ -62,22 +76,29 @@ function SingUpModal(){
           });
     
           if (!response.ok) {
-            throw new Error("Failed to fetch data from server.");
+              if(response.status == 400){
+                  const message  = await response.json()
+                  setError(message?.msg)
+              }else{
+                  throw new Error("Failed to fetch data from server.");
+              }
           } else {
             setOtpForm(true);
           }
           const responseData = await response.json();
+          const temporaryUserIdFromResonse = responseData?.temporaryUserId;
+          setTemporaryUserId(temporaryUserIdFromResonse)
         //   setMobileNumber(responseData?.mobileNumber);
         } catch (error) {
           console.error(error);
         }
     };
     async function handleOTPSubmit(){
-
-        
+        setValidationgOtp(true)
         const data ={
             otp : otpValue, 
-            mobilenumber: mobileNumber
+            mobilenumber: mobileNumber,
+            temporaryUserId : temporaryUserId
         }
 
         const endpoint = initialState === "signup" ? "createUser" : "loginUser";
@@ -95,28 +116,31 @@ function SingUpModal(){
             });
       
             if (!response.ok) {
-              throw new Error("Failed to fetch data from server.");
+                if(response.status == 400){
+                    const message  = await response.json()
+                    setOtpError(message?.msg)
+                    setValidationgOtp(false)
+                }else{
+                    throw new Error("Failed to fetch data from server.");
+                }
             }
       
             const responseData = await response.json();
             dispatch(setUserData(responseData))
             dispatch(setSignUpModal(false))
+            setValidationgOtp(false)
           } catch (error) {
             console.error(error);
-          }
+        }
 
 
     }
-
-
-
-
 
     return(
         <Modal  
             visible={signUpModal}
             footer={null}
-            onCancel={() => dispatch(setSignUpModal(false))} 
+            onCancel={() => {dispatch(setSignUpModal(false)); setError("")}}
             
         > 
         <div className="p-10" >
@@ -157,16 +181,20 @@ function SingUpModal(){
                                     fontSize: '32px' 
                                 }} 
                                 value={otpValue}
-                                onChange={setOtpValue}
+                                // onChange={setOtpValue}
+                                onChange={(otp) => {
+                                    setOtpValue(otp);
+                                    setOtpError(null);
+                                }}
                                 numInputs={6}
                                 renderSeparator={<span>-</span>}
                                 renderInput={(props) => <input {...props} />}
                                 
                             />
                         </div>
+                        {otpError && <p className="text-red-600 mt-2">{otpError}</p>}
                        
-                        
-                        <button className="border px-3 py-1 rounded cursor primaryColor text-white w-full mt-10 text-xl" onClick={handleOTPSubmit}>Submit</button>
+                        <button className="border px-3 py-1 rounded cursor primaryColor text-white w-full mt-10 text-xl" onClick={handleOTPSubmit} disabled={validatingOtp}>{validatingOtp ? "Validating OTP ..." : "Submit"}</button>
                     </div>
                 ): (
                     <div>
@@ -187,10 +215,10 @@ function SingUpModal(){
                                 className="border-b phone-input text-xl px-2"
                                 placeholder="Mobile Number"
                             />
-                            {error && <p>{error}</p>}
+                            {error && <p className="text-red-600 mt-2">{error}</p>}
                         </div>
                     
-                        <button className="border px-3 py-1 rounded cursor primaryColor text-white w-full mt-10 text-xl" onClick={handleSingUp}>
+                        <button className="border px-3 py-1 rounded cursor primaryColor text-white w-full mt-10 text-xl" onClick={handleSingUp} disabled={disableButton}>
                             {initialState === "signup" ? "Signup" : "Login" }
                         </button>
                         <small className="text-center block mt-2">By {initialState === "signup" ? "Signing" : "Loging" }  in, I agree to Terms and Conditions</small>
