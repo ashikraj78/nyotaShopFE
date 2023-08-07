@@ -23,7 +23,7 @@ function Product(){
             {productsData.map((product: {_id: string, title: string, cost: number}) => (
             <div 
                 key={product._id} 
-                className="mb-10 cursor-pointer" 
+                className="mb-10 cursor-pointer w-11/12" 
                 onClick={()=> router.push(`/product/${product._id}`)}
             >
                 
