@@ -179,3 +179,6 @@ body {
   text-align: center;
   font-size: 20px;
 }
+.borderTemplate {
+  border: 2px solid #7e223c;
+}
