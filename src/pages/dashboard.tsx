@@ -3,8 +3,8 @@ import OrderDashboard from "@/components/OrderDashboard";
 import React, { useState } from "react";
 
 function Dashboard(){
-    const [product, setProduct] = useState<boolean>(false)
-    const [order, setOrder] = useState<boolean>(true)
+    const [product, setProduct] = useState<boolean>(true)
+    const [order, setOrder] = useState<boolean>(false)
     const [payment, setPayment] = useState<boolean>(false)
     return(
         <div className="flex border-t">
