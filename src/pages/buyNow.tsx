@@ -122,6 +122,8 @@ function BuyNow() {
   const [events, setEvents] = useState<EventState[]>(
     reduxStoredEvents || [initialEventState]
   );
+  const [specialNotes, setSpecialNotes] = useState<string>("");
+
   const handleEventChange = (
     index: number,
     event: React.ChangeEvent<HTMLInputElement>
@@ -189,6 +191,7 @@ function BuyNow() {
             brideData: bride,
             groomData: groom,
             eventsData: events,
+            specialNotes: specialNotes,
           })
         );
       }
@@ -201,6 +204,7 @@ function BuyNow() {
           brideData: bride,
           groomData: groom,
           eventsData: events,
+          specialNotes: specialNotes,
         })
       );
     }
@@ -371,6 +375,9 @@ function BuyNow() {
 
   function handleSubmit(event: any) {
     event.preventDefault();
+  }
+  function handleSpecialNotes(event: any) {
+    setSpecialNotes(event.target.value);
   }
 
   return (
@@ -635,17 +642,12 @@ function BuyNow() {
             />
           </div>
           {addImage && <ImageUploader onDrop={handleDrop} />}
-
-          {/* <div className=" mt-12  flex w-44 border justify-center items-center py-3 primaryColor cursor-pointer">
-            <p className="text-xl font-normal text-white">Add Event</p>
-            <div className="border rounded-full w-6 h-6  flex justify-center items-center ml-7 bg-white primaryTextColor">
-              +
-            </div>
-          </div> */}
           <div className="primaryTextColor">
             <p className="text-xl font-extrabold mb-4 ">Special Note</p>
 
             <textarea
+              onChange={(e) => handleSpecialNotes(e)}
+              value={specialNotes}
               rows={4}
               className="border-2 p-2 rounded-md text-xl  mb-2 shadow  w-full "
               placeholder="Please let us know if you have any specific requirements beyond the options provided above"

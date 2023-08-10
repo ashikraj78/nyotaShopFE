@@ -7,6 +7,7 @@ function Order() {
     _id: string;
     createdAt: string;
     paidAmount: number;
+    orderStatus: any;
     productId: {
       title: string;
       videoLink: string;
@@ -134,9 +135,9 @@ function Order() {
                 </div>
               </div>
               <div className="flex flex-col justify-between">
-                <button className="border block w-60 primaryColor text-white rounded py-4 px-4 text-lg">
-                  Track
-                </button>
+                <p className="border-b-2 block w-60 primaryTextColor py-4 px-4 text-lg text-center font-bold">
+                  {order?.orderStatus}
+                </p>
                 <button className="border block w-60 primaryColor text-white rounded py-4 px-4 text-lg">
                   Order Details
                 </button>
