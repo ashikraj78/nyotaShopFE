@@ -78,6 +78,23 @@ function Order() {
     return `${day} ${monthName} ${year}`;
   }
 
+  function getTime(dateString: string) {
+    // Convert the ISO string to a Date object
+    const date = new Date(dateString);
+
+    // Adjust for the Indian Standard Time (IST) timezone, which is UTC+5:30
+    date.setMinutes(date.getMinutes() + date.getTimezoneOffset() + 330);
+
+    // Extract the time
+    const timeString = new Intl.DateTimeFormat("en-IN", {
+      hour: "2-digit",
+      minute: "2-digit",
+      // second: "2-digit",
+    }).format(date);
+
+    return timeString;
+  }
+
   return (
     <div className="mx-36 mt-20 min-h-50vh">
       <p className="text-3xl font-medium text-center">Your Orders</p>
@@ -102,10 +119,14 @@ function Order() {
       {orders?.map((order: Order) => (
         <div className="my-10 bg-gray-100" key={order._id}>
           <div className="flex justify-between border rounded-t-lg p-6 secondaryColor">
-            <div className="flex w-1/4 justify-between">
+            <div className="flex w-1/3 justify-between">
               <div>
                 <p>ORDER PLACED</p>
                 <p className="font-semibold"> {formatDate(order?.createdAt)}</p>
+              </div>
+              <div>
+                <p>ORDER TIME</p>
+                <p className="font-semibold"> {getTime(order?.createdAt)}</p>
               </div>
               <div>
                 <p>TOTAL</p>
@@ -119,7 +140,8 @@ function Order() {
           </div>
           <div className="p-6  border-x  border-b rounded-b-lg">
             <p className="text-green-600 text-lg font-bold">
-              Arriving {addDays(order?.createdAt, 4)}
+              Arriving : {getTime(order?.createdAt)} ,{" "}
+              {addDays(order?.createdAt, 4)}
             </p>
             <div className=" flex justify-between">
               <div>

@@ -296,6 +296,8 @@ function BuyNow() {
       paidAmount: paidAmount,
     };
 
+    const token = userData?.jwtToken;
+
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_SERVER_SIDE_URI}/order/createOrder`,
       {
@@ -303,6 +305,7 @@ function BuyNow() {
         body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         mode: "cors",
       }

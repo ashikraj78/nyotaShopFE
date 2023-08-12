@@ -148,6 +148,23 @@ function OrderDetailsPage() {
     return `${day} ${monthName} ${year}`;
   }
 
+  function getTime(dateString: string) {
+    // Convert the ISO string to a Date object
+    const date = new Date(dateString);
+
+    // Adjust for the Indian Standard Time (IST) timezone, which is UTC+5:30
+    date.setMinutes(date.getMinutes() + date.getTimezoneOffset() + 330);
+
+    // Extract the time
+    const timeString = new Intl.DateTimeFormat("en-IN", {
+      hour: "2-digit",
+      minute: "2-digit",
+      // second: "2-digit",
+    }).format(date);
+
+    return timeString;
+  }
+
   const [orderStatusValue, setOrderStatusValue] = useState<
     Order["orderStatus"]
   >(orderDetailsData?.orderStatus || "Received");
@@ -200,6 +217,9 @@ function OrderDetailsPage() {
                 <>
                   <p className="text-gray-500">
                     Order Date : {formatDate(orderDetailsData?.createdAt)}
+                  </p>
+                  <p className="text-gray-500">
+                    Order Time : {getTime(orderDetailsData?.createdAt)}
                   </p>
                   <p className="text-red-500">
                     Delivery Date : {addDays(orderDetailsData?.createdAt, 4)}

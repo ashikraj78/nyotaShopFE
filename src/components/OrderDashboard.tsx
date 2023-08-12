@@ -24,7 +24,6 @@ function OderDashboard() {
   }
 
   const [ordersData, setOrdersData] = useState<Order[] | null>(null);
-  console.log(ordersData, "the orders data");
 
   useEffect(() => {
     async function fetchAllOrders() {
@@ -97,6 +96,22 @@ function OderDashboard() {
 
     return `${day} ${monthName} ${year}`;
   }
+  function getTime(dateString: string) {
+    // Convert the ISO string to a Date object
+    const date = new Date(dateString);
+
+    // Adjust for the Indian Standard Time (IST) timezone, which is UTC+5:30
+    date.setMinutes(date.getMinutes() + date.getTimezoneOffset() + 330);
+
+    // Extract the time
+    const timeString = new Intl.DateTimeFormat("en-IN", {
+      hour: "2-digit",
+      minute: "2-digit",
+      // second: "2-digit",
+    }).format(date);
+
+    return timeString;
+  }
 
   const handleOrderDetails = (id: string) => {
     router.push({
@@ -156,10 +171,8 @@ function OderDashboard() {
                     </a>
                   </div>
                   <div className="text-sm">
-                    <p className="text-gray-500">Photos</p>
-                    <a className="underline underline-offset-4 text-blue-700 cursor-pointer">
-                      Download
-                    </a>
+                    <p className="text-gray-500">Order Time</p>
+                    <p>{getTime(order?.createdAt)}</p>
                   </div>
                   <div className="text-sm">
                     <p className="text-gray-500">Last date for Submission</p>
