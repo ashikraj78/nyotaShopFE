@@ -1,10 +1,11 @@
 import Product from "@/components/product";
 import OrderDashboard from "@/components/OrderDashboard";
 import React, { useState } from "react";
+import withAuthRedirect from "@/utils/withAuthRedirect";
 
 function Dashboard() {
-  const [product, setProduct] = useState<boolean>(false);
-  const [order, setOrder] = useState<boolean>(true);
+  const [product, setProduct] = useState<boolean>(true);
+  const [order, setOrder] = useState<boolean>(false);
   const [payment, setPayment] = useState<boolean>(false);
   return (
     <div className="flex border-t">
@@ -61,4 +62,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default withAuthRedirect(Dashboard);

@@ -1,9 +1,11 @@
+import { counterStates } from "@/redux/counterReducer";
 import {
   GetServerSidePropsContext,
   GetServerSidePropsResult,
   NextPage,
 } from "next";
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
 interface User {
   _id: string;
@@ -253,11 +255,19 @@ export async function getServerSideProps(
   context: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<OrderProps>> {
   const backEndURI = process.env.NEXT_PUBLIC_SERVER_SIDE_URI;
+  // const { userData } = useSelector(counterStates);
+  // const token = userData.jwtToken;
   let id = "";
   if (context.params) {
     id = context.params.id as string;
   }
-  const res = await fetch(`${backEndURI}/order/showOrder?id=${id}`);
+  const res = await fetch(`${backEndURI}/order/showOrder?id=${id}`, {
+    method: "GET",
+    // headers: {
+    //   "Content-Type": "application/json",
+    //   Authorization: `Bearer ${token}`,
+    // },
+  });
   const order: Order = await res.json();
 
   return { props: { order } };

@@ -2,6 +2,7 @@ import { counterStates, setThankModal } from "@/redux/counterReducer";
 import Image from "next/image";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import withAuthRedirect from "@/utils/withAuthRedirect";
 function Order() {
   interface Order {
     _id: string;
@@ -17,7 +18,6 @@ function Order() {
   const dispatch = useDispatch();
   const { formData, userData } = useSelector(counterStates);
   const orders: Order[] = userData?.user?.myOrders;
-  console.log(orders.length, "orders");
 
   useEffect(() => {
     dispatch(setThankModal(false));
@@ -163,4 +163,4 @@ function Order() {
   );
 }
 
-export default Order;
+export default withAuthRedirect(Order);
