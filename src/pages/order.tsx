@@ -1,8 +1,9 @@
 import { counterStates, setThankModal } from "@/redux/counterReducer";
 import Image from "next/image";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import withAuthRedirect from "@/utils/withAuthRedirect";
+import OrderDetailsModal from "@/components/OrderDetailsModal";
 function Order() {
   interface Order {
     _id: string;
@@ -23,6 +24,8 @@ function Order() {
     dispatch(setThankModal(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const [orderDetailsModal, setOrderDetailsModal] = useState<any>(false);
 
   function formatDate(dateString: string) {
     let date = new Date(dateString);
@@ -163,12 +166,22 @@ function Order() {
                 <button className="border block w-60 primaryColor text-white rounded py-4 px-4 text-lg">
                   Order Details
                 </button>
-                <button className="border block w-60 primaryColor text-white rounded py-4 px-4 text-lg">
+                <button
+                  className="border block w-60 primaryColor text-white rounded py-4 px-4 text-lg"
+                  onClick={() => setOrderDetailsModal(order._id)}
+                >
                   Edit Order
                 </button>
               </div>
             </div>
           </div>
+          {orderDetailsModal === order._id && (
+            <OrderDetailsModal
+              orderDetailsModal={orderDetailsModal}
+              setOrderDetailsModal={setOrderDetailsModal}
+              orderId={order._id}
+            />
+          )}
         </div>
       ))}
 
