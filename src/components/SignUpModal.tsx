@@ -136,7 +136,7 @@ function SingUpModal() {
 
   return (
     <Modal
-      visible={signUpModal}
+      open={signUpModal}
       footer={null}
       onCancel={() => {
         dispatch(setSignUpModal(false));
