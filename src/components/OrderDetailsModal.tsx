@@ -281,23 +281,50 @@ const OrderDetailsModal: React.FC<Props> = ({
         const updatedEvents = [...events];
         updatedEvents[eventEditMode] = data;
 
-        setOrderDetailsData(
-          (prevState) =>
-            ({
-              ...prevState,
-              formDataId: {
-                ...prevState?.formDataId,
-                eventsData: updatedEvents,
-              },
-            } as Order)
-        );
+        const updatedOrderDetails = {
+          ...orderDetailsData,
+          formDataId: {
+            ...orderDetailsData?.formDataId,
+            eventsData: updatedEvents,
+          },
+        } as Order;
+
+        setOrderDetailsData(updatedOrderDetails);
         setEvents(updatedEvents);
         setAddEventAction(null);
         setEventEditMode(null);
+        updateEventsData(updatedOrderDetails?.formDataId);
       }
     }
     //... and so on for other form types
   };
+
+  async function updateEventsData(finalData: any) {
+    const formDataId = orderDetailsData?.formDataId?._id;
+
+    try {
+      const response = await fetch(
+        `${backEndURI}/formData/updateFormData?id=${formDataId}`,
+        {
+          method: "PUT",
+          body: JSON.stringify(finalData),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          mode: "cors",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Product updation is failed");
+      }
+
+      const responseData = await response.json();
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   const handleBrideChange = handleSubmit((data) => saveChanges(data, "bride"));
   const handleGroomChange = handleSubmit((data) => saveChanges(data, "groom"));
@@ -320,7 +347,7 @@ const OrderDetailsModal: React.FC<Props> = ({
 
   return (
     <Modal
-      visible={orderDetailsModal}
+      open={orderDetailsModal}
       onCancel={() => setOrderDetailsModal(false)}
       footer={null}
       width={1200}
