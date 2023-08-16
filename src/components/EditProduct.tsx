@@ -31,7 +31,6 @@ const EditProduct: React.FC<Props> = ({
   const dispatch = useDispatch();
   const backEndURI = process.env.NEXT_PUBLIC_SERVER_SIDE_URI;
   const [productData, setProcutData] = useState<FormValues | null>(null);
-  console.log(productData, "produt dat");
 
   useEffect(() => {
     // get the product details
@@ -55,7 +54,6 @@ const EditProduct: React.FC<Props> = ({
   } = useForm<FormValues>();
 
   const onSubmit = async (data: FormValues) => {
-    console.log(data, "the edited data");
     const creatorId = userData?.user?._id;
     const finalData = { ...data, creatorId };
     const token = userData?.jwtToken;
@@ -102,7 +100,7 @@ const EditProduct: React.FC<Props> = ({
 
   return (
     <Modal
-      visible={editProduct}
+      open={editProduct}
       footer={null}
       onCancel={() => {
         setEditProduct(false);
