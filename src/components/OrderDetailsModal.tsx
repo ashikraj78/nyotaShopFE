@@ -3,6 +3,8 @@ import { Modal } from "antd";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { TbEdit } from "react-icons/tb";
+import { AiOutlineCloseCircle } from "react-icons/ai";
+import { RiDeleteBin5Line } from "react-icons/ri";
 import { useForm } from "react-hook-form";
 
 interface User {
@@ -53,6 +55,12 @@ interface Order {
   orderStatus: "Received" | "InProgress" | "Delivered";
   createdAt?: string;
 }
+interface EventState {
+  title?: string | null;
+  venue?: string | null;
+  time?: string | null;
+  date?: string | null;
+}
 
 interface Props {
   setOrderDetailsModal: Dispatch<SetStateAction<boolean>>;
@@ -65,13 +73,32 @@ const OrderDetailsModal: React.FC<Props> = ({
   setOrderDetailsModal,
   orderId,
 }) => {
+  const initialEventState: EventState = {
+    title: null,
+    venue: null,
+    time: null,
+    date: null,
+  };
   const backEndURI = process.env.NEXT_PUBLIC_SERVER_SIDE_URI;
   const { userData } = useSelector(counterStates);
   const token = userData?.jwtToken;
   const [orderDetailsData, setOrderDetailsData] = useState<Order | null>(null);
-  console.log(orderDetailsData, "order details data");
+  const eventDetailsData = orderDetailsData?.formDataId?.eventsData;
   const [brideEditMode, setBrideEditMode] = useState<boolean>(false);
-  const { register, handleSubmit, setValue } = useForm();
+  const [groomEditMode, setGroomEditMode] = useState<boolean>(false);
+  const [eventEditMode, setEventEditMode] = useState<number | null>(null);
+  const [editClose, setEditClose] = useState<number | null>(null);
+  const [addEventAction, setAddEventAction] = useState<number | null>(null);
+  const [events, setEvents] = useState<EventState[]>(
+    eventDetailsData || [initialEventState]
+  );
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm();
 
   useEffect(() => {
     const fetchOrderData = async () => {
@@ -85,6 +112,7 @@ const OrderDetailsModal: React.FC<Props> = ({
         });
         const data = await res.json();
         setOrderDetailsData(data);
+        setEvents(data?.formDataId?.eventsData);
       } catch (error) {
         console.error(error);
       }
@@ -185,7 +213,41 @@ const OrderDetailsModal: React.FC<Props> = ({
         orderDetailsData.formDataId.brideData.brideGrandFatherName
       );
     }
-  }, [brideEditMode, setValue, orderDetailsData]);
+    if (groomEditMode && orderDetailsData?.formDataId?.groomData) {
+      setValue("groomName", orderDetailsData.formDataId.groomData.groomName);
+      setValue(
+        "groomMotherName",
+        orderDetailsData.formDataId.groomData.groomMotherName
+      );
+      setValue(
+        "groomFatherName",
+        orderDetailsData.formDataId.groomData.groomFatherName
+      );
+      setValue(
+        "groomGrandMotherName",
+        orderDetailsData.formDataId.groomData.groomGrandMotherName
+      );
+      setValue(
+        "groomGrandFatherName",
+        orderDetailsData.formDataId.groomData.groomGrandFatherName
+      );
+    }
+  }, [brideEditMode, setValue, orderDetailsData, groomEditMode]);
+  useEffect(() => {
+    if (eventEditMode) {
+      setValue("title", events[eventEditMode]?.title || "");
+      setValue("venue", events[eventEditMode]?.venue || "");
+      setValue("time", events[eventEditMode]?.time || "");
+      setValue("date", events[eventEditMode]?.date || "");
+    }
+  }, [eventEditMode, events, setValue]);
+
+  function handleValueSet(index: number) {
+    setValue("title", events[index]?.title);
+    setValue("venue", events[index]?.venue);
+    setValue("time", events[index]?.time);
+    setValue("date", events[index]?.date);
+  }
   const saveChanges = (data: any, formType: string) => {
     // Distinguishing actions based on form type
     if (formType === "bride") {
@@ -199,17 +261,62 @@ const OrderDetailsModal: React.FC<Props> = ({
             },
           } as Order)
       );
-      console.log(data);
+      setBrideEditMode(false);
       // Handle bride form submission
     } else if (formType === "groom") {
       // Handle groom form submission
+      setOrderDetailsData(
+        (prevState) =>
+          ({
+            ...prevState,
+            formDataId: {
+              ...prevState?.formDataId,
+              groomData: data,
+            },
+          } as Order)
+      );
+      setGroomEditMode(false);
+    } else if (formType == "event") {
+      if (eventEditMode) {
+        const updatedEvents = [...events];
+        updatedEvents[eventEditMode] = data;
+
+        setOrderDetailsData(
+          (prevState) =>
+            ({
+              ...prevState,
+              formDataId: {
+                ...prevState?.formDataId,
+                eventsData: updatedEvents,
+              },
+            } as Order)
+        );
+        setEvents(updatedEvents);
+        setAddEventAction(null);
+        setEventEditMode(null);
+      }
     }
     //... and so on for other form types
-
-    setBrideEditMode(false);
   };
 
   const handleBrideChange = handleSubmit((data) => saveChanges(data, "bride"));
+  const handleGroomChange = handleSubmit((data) => saveChanges(data, "groom"));
+  const handleEventChange = handleSubmit((data) => saveChanges(data, "event"));
+
+  const addEvent = () => {
+    if (!addEventAction) {
+      setEventEditMode(events.length);
+      setAddEventAction(events.length);
+      setEvents([...events, initialEventState]);
+    }
+  };
+  const handleEventDelete = (index: number) => {
+    setAddEventAction(null);
+    setEventEditMode(null);
+    const newEvents = [...events];
+    newEvents.splice(index, 1);
+    setEvents(newEvents);
+  };
 
   return (
     <Modal
@@ -348,47 +455,219 @@ const OrderDetailsModal: React.FC<Props> = ({
                     </>
                   )}
                 </div>
-                <div>
-                  <p className="text-xl">Groom Info</p>
-                  <p>
-                    Name : {orderDetailsData?.formDataId?.groomData?.groomName}
-                  </p>
-                  <p>
-                    Mother Name :{" "}
-                    {orderDetailsData?.formDataId?.groomData?.groomMotherName}
-                  </p>
-                  <p>
-                    Father Name :{" "}
-                    {orderDetailsData?.formDataId?.groomData?.groomFatherName}
-                  </p>
-                  <p>
-                    Grand Mother Name :{" "}
-                    {
-                      orderDetailsData?.formDataId?.groomData
-                        ?.groomGrandMotherName
-                    }
-                  </p>
-                  <p>
-                    Grand Father Name :{" "}
-                    {
-                      orderDetailsData?.formDataId?.groomData
-                        ?.groomGrandFatherName
-                    }
-                  </p>
+                <div className="w-1/3">
+                  <div className="flex justify-between">
+                    <p className="text-xl">Groom Info</p>
+                    <TbEdit
+                      className="cursor-pointer ml-1 primaryTextColor"
+                      onClick={() => setGroomEditMode(!groomEditMode)}
+                    />
+                  </div>
+                  {groomEditMode ? (
+                    <form onSubmit={handleGroomChange}>
+                      <div className="flex mb-2">
+                        <label>Name : </label>
+                        <input {...register("groomName")} className=" border" />
+                      </div>
+                      <div className="flex mb-2">
+                        <label>Mother Name : </label>
+                        <input
+                          {...register("groomMotherName")}
+                          className=" border ml-2 "
+                        />
+                      </div>
+                      <div className="flex mb-2">
+                        <label>Father Name : </label>
+                        <input
+                          {...register("groomFatherName")}
+                          className=" border ml-2 "
+                        />
+                      </div>
+                      <div className="flex mb-2">
+                        <label>Grand Mother Name : </label>
+                        <input
+                          {...register("groomGrandMotherName")}
+                          className="border ml-2 "
+                        />
+                      </div>
+                      <div className="flex mb-2">
+                        <label>Grand Father Name : </label>
+                        <input
+                          {...register("groomGrandFatherName")}
+                          className="border ml-2"
+                        />
+                      </div>
+
+                      <div className="text-right">
+                        <button
+                          type="submit"
+                          className="border px-2 py-1 rounded"
+                        >
+                          Save Changes
+                        </button>
+                      </div>
+                    </form>
+                  ) : (
+                    <>
+                      <p>
+                        Name :{" "}
+                        {orderDetailsData?.formDataId?.groomData?.groomName}
+                      </p>
+                      <p>
+                        Mother Name :{" "}
+                        {
+                          orderDetailsData?.formDataId?.groomData
+                            ?.groomMotherName
+                        }
+                      </p>
+                      <p>
+                        Father Name :{" "}
+                        {
+                          orderDetailsData?.formDataId?.groomData
+                            ?.groomFatherName
+                        }
+                      </p>
+                      <p>
+                        Grand Mother Name :{" "}
+                        {
+                          orderDetailsData?.formDataId?.groomData
+                            ?.groomGrandMotherName
+                        }
+                      </p>
+                      <p>
+                        Grand Father Name :{" "}
+                        {
+                          orderDetailsData?.formDataId?.groomData
+                            ?.groomGrandFatherName
+                        }
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
               <div className="border-b-2 pb-2">
                 <p className="text-2xl">Events</p>
-                {orderDetailsData?.formDataId?.eventsData.map(
-                  (event, index: number) => (
-                    <div className="my-4" key={index}>
-                      <p className="text-xl">{event.title}</p>
-                      <p>Venue : {event.venue}</p>
-                      <p>Time: {event.time}</p>
-                      <p>Date : {event.date}</p>
+
+                <div className="flex">
+                  {events.map((event, index: number) => (
+                    <div
+                      className="my-4 w-1/4 border px-2 py-1 mr-4 rounded:md"
+                      key={index}
+                    >
+                      <div className="flex justify-end ">
+                        {editClose === index ? (
+                          <AiOutlineCloseCircle
+                            className="cursor-pointer ml-1 primaryTextColor"
+                            onClick={() => {
+                              setEditClose(null);
+                              setEventEditMode(null);
+                            }}
+                          />
+                        ) : (
+                          <>
+                            {addEventAction !== index && (
+                              <TbEdit
+                                className="cursor-pointer ml-1 primaryTextColor"
+                                onClick={() => {
+                                  setEventEditMode(index);
+                                  setEditClose(index);
+                                  handleValueSet(index);
+                                }}
+                              />
+                            )}
+                          </>
+                        )}
+                      </div>
+
+                      {eventEditMode === index ? (
+                        <>
+                          <form onSubmit={handleEventChange}>
+                            <div className="mb-2">
+                              <label>Title : </label>
+                              <input
+                                {...register("title", { required: true })}
+                                className=" border"
+                              />
+                              {errors.title && (
+                                <span className="text-red-500 block">
+                                  *This field is required
+                                </span>
+                              )}
+                            </div>
+                            <div className="mb-2">
+                              <label>Venue : </label>
+                              <input
+                                {...register("venue", { required: true })}
+                                className=" border"
+                              />
+                              {errors.venue && (
+                                <span className="text-red-500 block">
+                                  *This field is required
+                                </span>
+                              )}
+                            </div>
+                            <div className="mb-2">
+                              <label>Time : </label>
+                              <input
+                                {...register("time", { required: true })}
+                                type="time"
+                                className=" border"
+                              />
+                              {errors.time && (
+                                <span className="text-red-500 block">
+                                  *This field is required
+                                </span>
+                              )}
+                            </div>
+                            <div className="mb-2">
+                              <label>Date : </label>
+                              <input
+                                {...register("date", { required: true })}
+                                type="date"
+                                className=" border"
+                              />
+                              {errors.date && (
+                                <span className="text-red-500 block">
+                                  *This field is required
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-right">
+                              <RiDeleteBin5Line
+                                className="cursor-pointer inline mr-2"
+                                onClick={() => handleEventDelete(index)}
+                              />
+                              <button
+                                type="submit"
+                                className="border px-4 py-1 rounded shadow"
+                              >
+                                Save Change
+                              </button>
+                            </div>
+                          </form>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-normal">
+                            Title: {event.title || ""}
+                          </p>
+                          <p>Venue : {event.venue || ""}</p>
+                          <p>Time: {event.time || ""}</p>
+                          <p>Date : {event.date || ""}</p>
+                        </>
+                      )}
                     </div>
-                  )
-                )}
+                  ))}
+                  <div
+                    className="flex w-44 h-14 ml-4 mt-4 rounded border justify-center items-center py-1 primaryColor cursor-pointer"
+                    onClick={addEvent}
+                  >
+                    <p className="text-xl font-normal text-white">Add Event</p>
+                    <div className="border rounded-full w-6 h-6  flex justify-center items-center ml-7 bg-white primaryTextColor">
+                      +
+                    </div>
+                  </div>
+                </div>
               </div>
               <div className="border-b-2 pb-2">
                 <p>Links for Photographs</p>
