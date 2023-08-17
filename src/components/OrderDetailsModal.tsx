@@ -97,6 +97,7 @@ const OrderDetailsModal: React.FC<Props> = ({
     register,
     handleSubmit,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm();
 
@@ -251,35 +252,53 @@ const OrderDetailsModal: React.FC<Props> = ({
   const saveChanges = (data: any, formType: string) => {
     // Distinguishing actions based on form type
     if (formType === "bride") {
-      setOrderDetailsData(
-        (prevState) =>
-          ({
-            ...prevState,
-            formDataId: {
-              ...prevState?.formDataId,
-              brideData: data,
-            },
-          } as Order)
-      );
+      const brideSubmitData = {
+        brideName: data.brideName,
+        brideMotherName: data.brideMotherName,
+        brideFatherName: data.brideFatherName,
+        brideGrandMotherName: data.brideGrandMotherName,
+        brideGrandFatherName: data.brideGrandFatherName,
+      };
+      const updatedOrderDetails = {
+        ...orderDetailsData,
+        formDataId: {
+          ...orderDetailsData?.formDataId,
+          brideData: brideSubmitData,
+        },
+      } as Order;
+      setOrderDetailsData(updatedOrderDetails);
+      updateFormData(updatedOrderDetails?.formDataId);
       setBrideEditMode(false);
       // Handle bride form submission
     } else if (formType === "groom") {
+      const groomSubmitData = {
+        groomName: data.groomName,
+        groomMotherName: data.groomMotherName,
+        groomFatherName: data.groomFatherName,
+        groomGrandMotherName: data.groomGrandMotherName,
+        groomGrandFatherName: data.groomGrandFatherName,
+      };
       // Handle groom form submission
-      setOrderDetailsData(
-        (prevState) =>
-          ({
-            ...prevState,
-            formDataId: {
-              ...prevState?.formDataId,
-              groomData: data,
-            },
-          } as Order)
-      );
+      const updatedOrderDetails = {
+        ...orderDetailsData,
+        formDataId: {
+          ...orderDetailsData?.formDataId,
+          groomData: groomSubmitData,
+        },
+      } as Order;
+      setOrderDetailsData(updatedOrderDetails);
+      updateFormData(updatedOrderDetails?.formDataId);
       setGroomEditMode(false);
     } else if (formType == "event") {
       if (eventEditMode) {
+        const eventSubmitData = {
+          title: data.title,
+          venue: data.venue,
+          time: data.time,
+          date: data.date,
+        };
         const updatedEvents = [...events];
-        updatedEvents[eventEditMode] = data;
+        updatedEvents[eventEditMode] = eventSubmitData;
 
         const updatedOrderDetails = {
           ...orderDetailsData,
@@ -290,16 +309,16 @@ const OrderDetailsModal: React.FC<Props> = ({
         } as Order;
 
         setOrderDetailsData(updatedOrderDetails);
+        updateFormData(updatedOrderDetails?.formDataId);
         setEvents(updatedEvents);
         setAddEventAction(null);
         setEventEditMode(null);
-        updateEventsData(updatedOrderDetails?.formDataId);
       }
     }
     //... and so on for other form types
   };
 
-  async function updateEventsData(finalData: any) {
+  async function updateFormData(finalData: any) {
     const formDataId = orderDetailsData?.formDataId?._id;
 
     try {
@@ -338,11 +357,23 @@ const OrderDetailsModal: React.FC<Props> = ({
     }
   };
   const handleEventDelete = (index: number) => {
+    const values = getValues();
     setAddEventAction(null);
     setEventEditMode(null);
     const newEvents = [...events];
     newEvents.splice(index, 1);
     setEvents(newEvents);
+    if (values.title || values.date || values.time || values.venue) {
+      const updatedOrderDetails = {
+        ...orderDetailsData,
+        formDataId: {
+          ...orderDetailsData?.formDataId,
+          eventsData: newEvents,
+        },
+      } as Order;
+      setOrderDetailsData(updatedOrderDetails);
+      updateFormData(updatedOrderDetails?.formDataId);
+    }
   };
 
   return (
@@ -575,10 +606,10 @@ const OrderDetailsModal: React.FC<Props> = ({
               <div className="border-b-2 pb-2">
                 <p className="text-2xl">Events</p>
 
-                <div className="flex">
+                <div className="grid grid-cols-3 gap-4">
                   {events.map((event, index: number) => (
                     <div
-                      className="my-4 w-1/4 border px-2 py-1 mr-4 rounded:md"
+                      className="my-4  border px-2 py-1 mr-4 rounded:md"
                       key={index}
                     >
                       <div className="flex justify-end ">
@@ -686,7 +717,7 @@ const OrderDetailsModal: React.FC<Props> = ({
                     </div>
                   ))}
                   <div
-                    className="flex w-44 h-14 ml-4 mt-4 rounded border justify-center items-center py-1 primaryColor cursor-pointer"
+                    className="flex w-44 h-14  mt-4 rounded border justify-center items-center py-1 primaryColor cursor-pointer"
                     onClick={addEvent}
                   >
                     <p className="text-xl font-normal text-white">Add Event</p>
