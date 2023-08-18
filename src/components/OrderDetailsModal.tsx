@@ -1,11 +1,20 @@
+/* eslint-disable @next/next/no-img-element */
 import { counterStates } from "@/redux/counterReducer";
-import { Modal } from "antd";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Modal, Switch } from "antd";
+import React, {
+  Dispatch,
+  SetStateAction,
+  use,
+  useEffect,
+  useState,
+} from "react";
 import { useSelector } from "react-redux";
 import { TbEdit } from "react-icons/tb";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { useForm } from "react-hook-form";
+import Image from "next/image";
+import ImageUploader from "./ImageUploader";
 
 interface User {
   _id: string;
@@ -38,11 +47,14 @@ interface Event {
   time: string;
   date: string;
 }
+
 interface FormData {
   _id: string;
   brideData: BrideInfo;
   groomData: GroomInfo;
   eventsData: [Event];
+  specialNotes: string;
+  images: string[];
 }
 
 interface Order {
@@ -92,6 +104,8 @@ const OrderDetailsModal: React.FC<Props> = ({
   const [events, setEvents] = useState<EventState[]>(
     eventDetailsData || [initialEventState]
   );
+  const [specialNotesEdit, setSpecialNotesEdit] = useState<boolean>(false);
+  const [addImage, setAddImage] = useState<boolean>(false);
 
   const {
     register,
@@ -242,6 +256,14 @@ const OrderDetailsModal: React.FC<Props> = ({
       setValue("date", events[eventEditMode]?.date || "");
     }
   }, [eventEditMode, events, setValue]);
+  useEffect(() => {
+    if (specialNotesEdit) {
+      setValue(
+        "specialNotes",
+        orderDetailsData?.formDataId?.specialNotes || ""
+      );
+    }
+  }, [specialNotesEdit, setValue, orderDetailsData]);
 
   function handleValueSet(index: number) {
     setValue("title", events[index]?.title);
@@ -290,7 +312,7 @@ const OrderDetailsModal: React.FC<Props> = ({
       updateFormData(updatedOrderDetails?.formDataId);
       setGroomEditMode(false);
     } else if (formType == "event") {
-      if (eventEditMode) {
+      if (eventEditMode !== null) {
         const eventSubmitData = {
           title: data.title,
           venue: data.venue,
@@ -312,8 +334,23 @@ const OrderDetailsModal: React.FC<Props> = ({
         updateFormData(updatedOrderDetails?.formDataId);
         setEvents(updatedEvents);
         setAddEventAction(null);
+        setEditClose(null);
         setEventEditMode(null);
       }
+    } else if (formType == "specialNotes") {
+      if (data.specialNotes.length > 0) {
+        const updatedOrderDetails = {
+          ...orderDetailsData,
+          formDataId: {
+            ...orderDetailsData?.formDataId,
+            specialNotes: data.specialNotes,
+          },
+        } as Order;
+        setOrderDetailsData(updatedOrderDetails);
+        updateFormData(updatedOrderDetails?.formDataId);
+      }
+
+      setSpecialNotesEdit(false);
     }
     //... and so on for other form types
   };
@@ -348,6 +385,9 @@ const OrderDetailsModal: React.FC<Props> = ({
   const handleBrideChange = handleSubmit((data) => saveChanges(data, "bride"));
   const handleGroomChange = handleSubmit((data) => saveChanges(data, "groom"));
   const handleEventChange = handleSubmit((data) => saveChanges(data, "event"));
+  const handleSpecialNotesChange = handleSubmit((data) =>
+    saveChanges(data, "specialNotes")
+  );
 
   const addEvent = () => {
     if (!addEventAction) {
@@ -360,6 +400,7 @@ const OrderDetailsModal: React.FC<Props> = ({
     const values = getValues();
     setAddEventAction(null);
     setEventEditMode(null);
+    setEditClose(null);
     const newEvents = [...events];
     newEvents.splice(index, 1);
     setEvents(newEvents);
@@ -375,6 +416,37 @@ const OrderDetailsModal: React.FC<Props> = ({
       updateFormData(updatedOrderDetails?.formDataId);
     }
   };
+  const handleImageDelete = (index: number) => {
+    if (orderDetailsData?.formDataId?.images) {
+      const updatedOrderDetails = {
+        ...orderDetailsData,
+        formDataId: {
+          ...orderDetailsData?.formDataId,
+          images: [
+            ...orderDetailsData?.formDataId?.images?.slice(0, index),
+            ...orderDetailsData?.formDataId?.images?.slice(index + 1),
+          ],
+        },
+      };
+      setOrderDetailsData(updatedOrderDetails);
+      // updateFormData(updatedOrderDetails?.formDataId);
+    }
+  };
+
+  const handleDrop = (acceptedFiles: File[]) => {
+    console.log(acceptedFiles);
+    // Handle the images.
+    acceptedFiles.forEach((file: any) => {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        // Do whatever you want with the file contents
+        const binaryStr = reader.result;
+        console.log(binaryStr);
+      };
+      reader.readAsArrayBuffer(file);
+    });
+  };
 
   return (
     <Modal
@@ -387,8 +459,7 @@ const OrderDetailsModal: React.FC<Props> = ({
         {!orderDetailsData ? (
           <p>Please Wait ...</p>
         ) : (
-          <div className="mt-10">
-            <p>this is order details page modal</p>
+          <div className="mt-10 p-4">
             <div className="flex justify-between">
               {orderDetailsData?.createdAt ? (
                 <>
@@ -410,8 +481,10 @@ const OrderDetailsModal: React.FC<Props> = ({
                 </>
               )}
             </div>
-            <div className="border-b-4 mb-6 pb-3">
-              <p className="text-2xl mb-2">Client </p>
+            <div className="stateBorder mb-6 mt-4 pb-3">
+              <p className="primaryTextColor text-2xl font-extrabold mb-2">
+                Client{" "}
+              </p>
               <div className="flex justify-between">
                 <p>Client Name: {orderDetailsData?.userId?.name}</p>
                 <p>Payment Amount: ₹{orderDetailsData?.paidAmount}</p>
@@ -425,7 +498,9 @@ const OrderDetailsModal: React.FC<Props> = ({
               <div className="flex justify-between border-b-2 pb-2">
                 <div className="w-1/3">
                   <div className="flex justify-between">
-                    <p className="text-xl">Bride Info</p>
+                    <p className="primaryTextColor text-2xl font-extrabold">
+                      Bride Info
+                    </p>
                     <TbEdit
                       className="cursor-pointer ml-1 primaryTextColor"
                       onClick={() => setBrideEditMode(!brideEditMode)}
@@ -515,7 +590,9 @@ const OrderDetailsModal: React.FC<Props> = ({
                 </div>
                 <div className="w-1/3">
                   <div className="flex justify-between">
-                    <p className="text-xl">Groom Info</p>
+                    <p className="primaryTextColor text-2xl font-extrabold">
+                      Groom Info
+                    </p>
                     <TbEdit
                       className="cursor-pointer ml-1 primaryTextColor"
                       onClick={() => setGroomEditMode(!groomEditMode)}
@@ -604,12 +681,14 @@ const OrderDetailsModal: React.FC<Props> = ({
                 </div>
               </div>
               <div className="border-b-2 pb-2">
-                <p className="text-2xl">Events</p>
+                <p className="primaryTextColor text-2xl font-extrabold">
+                  Events
+                </p>
 
                 <div className="grid grid-cols-3 gap-4">
                   {events.map((event, index: number) => (
                     <div
-                      className="my-4  border px-2 py-1 mr-4 rounded:md"
+                      className="my-4  border p-4 mr-4 rounded:md shadow"
                       key={index}
                     >
                       <div className="flex justify-end ">
@@ -727,9 +806,76 @@ const OrderDetailsModal: React.FC<Props> = ({
                   </div>
                 </div>
               </div>
+
               <div className="border-b-2 pb-2">
-                <p>Links for Photographs</p>
+                <p className="primaryTextColor text-2xl font-extrabold">
+                  Links for Photographs
+                </p>
+                <div className="mt-4 primaryTextColor flex">
+                  <p className="text-xl font-extrabold mb-4 mr-10">
+                    Upload Photos
+                  </p>
+                  <Switch
+                    checkedChildren="Yes"
+                    unCheckedChildren="No"
+                    className="primaryColor"
+                    onChange={() => setAddImage(!addImage)}
+                  />
+                </div>
+                {addImage && <ImageUploader onDrop={handleDrop} />}
                 {/* provide the link for photos */}
+                <div className="grid grid-cols-3 gap-4">
+                  {orderDetailsData?.formDataId?.images.map(
+                    (image: string, index: number) => (
+                      <div className="relative" key={index}>
+                        <RiDeleteBin5Line
+                          className="absolute right-20 top-4 bg-gray-300 rounded p-0.5 cursor-pointer"
+                          size={24}
+                          onClick={() => handleImageDelete(index)}
+                        />
+                        <img
+                          src={image}
+                          alt="Description of Image"
+                          width={300}
+                          height={500}
+                          className="rounded-md"
+                        />
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
+              <div className="border-b-2 pb-2 mt-4">
+                <div className="flex items-center">
+                  <p className="primaryTextColor text-2xl font-extrabold">
+                    Special Notes
+                  </p>
+                  <TbEdit
+                    className="cursor-pointer ml-4 primaryTextColor"
+                    onClick={() => {
+                      setSpecialNotesEdit(!specialNotesEdit);
+                    }}
+                  />
+                </div>
+
+                {specialNotesEdit ? (
+                  <form onSubmit={handleSpecialNotesChange}>
+                    <textarea
+                      {...register("specialNotes")}
+                      rows={4}
+                      className="border-2 p-2 rounded-md text-xl  mb-2  mt-4 shadow  w-full "
+                      placeholder="Please let us know if you have any specific requirements beyond the options provided above"
+                    />
+                    <button
+                      type="submit"
+                      className="border px-4 py-1 rounded shadow"
+                    >
+                      Save Changes
+                    </button>
+                  </form>
+                ) : (
+                  <p>{orderDetailsData?.formDataId?.specialNotes}</p>
+                )}
               </div>
             </div>
           </div>
