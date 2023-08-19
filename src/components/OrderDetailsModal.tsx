@@ -106,6 +106,7 @@ const OrderDetailsModal: React.FC<Props> = ({
   );
   const [specialNotesEdit, setSpecialNotesEdit] = useState<boolean>(false);
   const [addImage, setAddImage] = useState<boolean>(false);
+  const [images, setImages] = useState<string[] | null>(null);
 
   const {
     register,
@@ -822,7 +823,9 @@ const OrderDetailsModal: React.FC<Props> = ({
                     onChange={() => setAddImage(!addImage)}
                   />
                 </div>
-                {addImage && <ImageUploader onDrop={handleDrop} />}
+                {addImage && (
+                  <ImageUploader setImages={setImages} parentName="editOrder" />
+                )}
                 {/* provide the link for photos */}
                 <div className="grid grid-cols-3 gap-4">
                   {orderDetailsData?.formDataId?.images.map(
