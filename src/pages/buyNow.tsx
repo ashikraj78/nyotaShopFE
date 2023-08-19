@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Image from "next/image";
 import React, { ChangeEvent, use, useEffect, useState } from "react";
 import BuyProcess from "@/components/BuyProcess";
@@ -13,7 +14,7 @@ import {
 } from "@/redux/counterReducer";
 import SingUpModal from "@/components/SignUpModal";
 import { useRouter } from "next/router";
-import { paymentService } from "@/services";
+import { cloudinaryService, paymentService } from "@/services";
 import ThankModal from "@/components/ThankModal";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { useForm } from "react-hook-form";
@@ -123,6 +124,9 @@ function BuyNow() {
     reduxStoredEvents || [initialEventState]
   );
   const [specialNotes, setSpecialNotes] = useState<string>("");
+  const [images, setImages] = useState<string[] | null>(
+    formData?.images || null
+  );
 
   const handleEventChange = (
     index: number,
@@ -155,20 +159,7 @@ function BuyNow() {
       [e.target.name]: e.target.value,
     });
   };
-  const handleDrop = (acceptedFiles: File[]) => {
-    console.log(acceptedFiles);
-    // Handle the images.
-    acceptedFiles.forEach((file: any) => {
-      const reader = new FileReader();
 
-      reader.onload = () => {
-        // Do whatever you want with the file contents
-        const binaryStr = reader.result;
-        console.log(binaryStr);
-      };
-      reader.readAsArrayBuffer(file);
-    });
-  };
   async function handleNextClick(event: any) {
     event.preventDefault();
     const isValid = await trigger();
@@ -192,6 +183,7 @@ function BuyNow() {
             groomData: groom,
             eventsData: events,
             specialNotes: specialNotes,
+            images: images,
           })
         );
       }
@@ -205,6 +197,7 @@ function BuyNow() {
           groomData: groom,
           eventsData: events,
           specialNotes: specialNotes,
+          images: images,
         })
       );
     }
@@ -353,6 +346,29 @@ function BuyNow() {
       createFormData().then(() => {
         handlePayment();
       });
+    }
+  }
+
+  async function handleRemoveReduxImages(imageURL: string, index: number) {
+    if (images) {
+      try {
+        await cloudinaryService.deleteCloudinaryImage(imageURL);
+
+        const newImageData = [
+          ...images.slice(0, index),
+          ...images.slice(index + 1),
+        ];
+
+        setImages(newImageData);
+        dispatch(
+          setFormData({
+            ...formData,
+            images: newImageData,
+          })
+        );
+      } catch (error) {
+        console.error(error);
+      }
     }
   }
 
@@ -644,7 +660,29 @@ function BuyNow() {
               onChange={() => setAddImage(!addImage)}
             />
           </div>
-          {addImage && <ImageUploader onDrop={handleDrop} />}
+
+          <div className="grid grid-cols-3 gap-4">
+            {images &&
+              images.map((image, index: number) => (
+                <div key={index} className="relative inline-block">
+                  <RiDeleteBin5Line
+                    className="absolute left-4 top-4 bg-gray-300 rounded p-0.5 cursor-pointer"
+                    size={24}
+                    onClick={() => handleRemoveReduxImages(image, index)}
+                  />
+                  <img
+                    src={image}
+                    width={300}
+                    alt="client photos"
+                    className="w-4/6 rounded"
+                  />
+                </div>
+              ))}
+          </div>
+
+          {addImage && (
+            <ImageUploader setImages={setImages} parentName="buyNow" />
+          )}
           <div className="primaryTextColor">
             <p className="text-xl font-extrabold mb-4 ">Special Note</p>
 
