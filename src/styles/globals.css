@@ -77,8 +77,7 @@ body {
   line-height: normal;
 }
 .hero_div {
-  opacity: 0.9;
-  background: #274143;
+  background: rgba(39, 65, 67, 0.9);
   width: 772px;
 }
 .heroSection {
