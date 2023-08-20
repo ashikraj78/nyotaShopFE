@@ -39,6 +39,8 @@ interface FormData {
   brideData: BrideInfo;
   groomData: GroomInfo;
   eventsData: [Event];
+  images: string[];
+  specialNotes: string;
 }
 
 interface Order {
@@ -324,6 +326,20 @@ function OrderDetailsPage() {
             </div>
             <div className="border-b-2 pb-2">
               <p>Links for Photographs</p>
+              {orderDetailsData?.formDataId?.images.map(
+                (image: string, index: number) => (
+                  <div key={index}>
+                    <a
+                      href={image}
+                      target="_blank"
+                      className="text-blue-700 underline"
+                    >
+                      {" "}
+                      {image}
+                    </a>
+                  </div>
+                )
+              )}
               {/* provide the link for photos */}
             </div>
             <div className="border-b-2 pb-2">
