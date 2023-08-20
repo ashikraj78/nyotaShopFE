@@ -1,11 +1,12 @@
 export const formDataService = {
   updateImageFormData,
 };
+const backEndURI = process.env.NEXT_PUBLIC_SERVER_SIDE_URI;
 
 async function updateImageFormData(formDataId, images) {
   try {
     const response = await fetch(
-      `http://localhost:4000/formData/updateImageFromData?id=${formDataId}`,
+      `${backEndURI}/formData/updateImageFromData?id=${formDataId}`,
       {
         method: "PUT",
         body: JSON.stringify({ images }),
