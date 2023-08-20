@@ -8,11 +8,13 @@ import { useDispatch, useSelector } from "react-redux";
 interface ImageUploaderProps {
   setImages: (images: string[]) => void;
   parentName: string;
+  images: string[] | null;
 }
 
 const ImageUploader: React.FC<ImageUploaderProps> = ({
   setImages,
   parentName,
+  images,
 }) => {
   const dispatch = useDispatch();
   const { formData } = useSelector(counterStates);
@@ -75,7 +77,9 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
 
     setImageUrl(allUploadedUrls);
     setSelectedImage(null);
-    setImages(allUploadedUrls);
+    images
+      ? setImages([...images, ...allUploadedUrls])
+      : setImages(allUploadedUrls);
     handleImageSaving(allUploadedUrls);
 
     return allUploadedUrls;
@@ -89,6 +93,15 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
           images: allUploadedUrls,
         })
       );
+    }
+    if (parentName == " editOrder") {
+      console.log("hello this is editOrder");
+      // if (images) {
+      //   setImages([...images, ...allUploadedUrls]);
+      // }
+      // if (!images) {
+      //   setImages(allUploadedUrls);
+      // }
     }
   }
 
