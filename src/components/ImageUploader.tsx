@@ -138,7 +138,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
             {selectedImage?.map((image, index: number) => (
               <div className="relative inline-block" key={index}>
                 <RiDeleteBin5Line
-                  className="absolute right-5 top-4 bg-gray-300 rounded p-0.5 cursor-pointer"
+                  className="absolute left-4 top-4 bg-gray-300 rounded p-0.5 cursor-pointer"
                   size={24}
                   onClick={() => handleRemoveLocalImages(index)}
                 />
