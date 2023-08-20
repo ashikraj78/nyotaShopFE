@@ -110,6 +110,7 @@ const OrderDetailsModal: React.FC<Props> = ({
   const [images, setImages] = useState<string[] | null>(
     orderDetailsData?.formDataId?.images || null
   );
+  const [loader, setLoader] = useState<number | null>(null);
 
   const {
     register,
@@ -439,6 +440,7 @@ const OrderDetailsModal: React.FC<Props> = ({
   const handleImageDelete = async (image: string, index: number) => {
     if (images) {
       try {
+        setLoader(index);
         await cloudinaryService.deleteCloudinaryImage(image);
 
         const updatedImages = [
@@ -447,6 +449,7 @@ const OrderDetailsModal: React.FC<Props> = ({
         ];
 
         setImages(updatedImages);
+        setLoader(null);
       } catch (error) {
         console.error(error);
       }
@@ -838,17 +841,28 @@ const OrderDetailsModal: React.FC<Props> = ({
                 <div className="grid grid-cols-3 gap-4">
                   {images?.map((image: string, index: number) => (
                     <div className="relative" key={index}>
-                      <RiDeleteBin5Line
-                        className="absolute right-20 top-4 bg-gray-300 rounded p-0.5 cursor-pointer"
-                        size={24}
-                        onClick={() => handleImageDelete(image, index)}
-                      />
+                      {loader === index ? (
+                        <Image
+                          src="/loader.gif"
+                          width={150}
+                          height={150}
+                          alt="loader"
+                          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                        />
+                      ) : (
+                        <RiDeleteBin5Line
+                          className="absolute left-4 top-4 bg-gray-300 rounded p-0.5 cursor-pointer"
+                          size={24}
+                          onClick={() => handleImageDelete(image, index)}
+                        />
+                      )}
+
                       <img
                         src={image}
                         alt="Description of Image"
                         width={300}
-                        height={500}
-                        className="rounded-md"
+                        height={300}
+                        className="rounded-md w-full"
                       />
                     </div>
                   ))}

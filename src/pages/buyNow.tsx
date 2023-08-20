@@ -59,6 +59,7 @@ function BuyNow() {
   const [isPayButtonClicked, setPayButtonClicked] = useState<boolean>(false);
   const reduxStoredEvents = formData?.eventsData;
   const [eventError, setEventError] = useState<boolean>(false);
+  const [loader, setLoader] = useState<number | null>(null);
 
   interface BrideState {
     brideName?: string | null;
@@ -352,6 +353,7 @@ function BuyNow() {
   async function handleRemoveReduxImages(imageURL: string, index: number) {
     if (images) {
       try {
+        setLoader(index);
         await cloudinaryService.deleteCloudinaryImage(imageURL);
 
         const newImageData = [
@@ -366,6 +368,7 @@ function BuyNow() {
             images: newImageData,
           })
         );
+        setLoader(null);
       } catch (error) {
         console.error(error);
       }
@@ -664,17 +667,28 @@ function BuyNow() {
           <div className="grid grid-cols-3 gap-4 mb-4">
             {images &&
               images.map((image, index: number) => (
-                <div key={index} className="relative inline-block">
-                  <RiDeleteBin5Line
-                    className="absolute left-4 top-4 bg-gray-300 rounded p-0.5 cursor-pointer"
-                    size={24}
-                    onClick={() => handleRemoveReduxImages(image, index)}
-                  />
+                <div key={index} className="relative inline-block ">
+                  {loader === index ? (
+                    <Image
+                      src="/loader.gif"
+                      width={150}
+                      height={150}
+                      alt="loader"
+                      className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                    />
+                  ) : (
+                    <RiDeleteBin5Line
+                      className="absolute left-4 top-4 bg-gray-300 rounded p-0.5 cursor-pointer"
+                      size={24}
+                      onClick={() => handleRemoveReduxImages(image, index)}
+                    />
+                  )}
+
                   <img
                     src={image}
                     width={300}
                     alt="client photos"
-                    className="w-4/6 rounded shadow"
+                    className="w-full rounded shadow"
                   />
                 </div>
               ))}

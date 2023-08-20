@@ -21,6 +21,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   const [selectedImage, setSelectedImage] = useState<string[] | null>(null);
   const [fileData, setFileData] = useState<any | null>(null);
   const [imageUrl, setImageUrl] = useState<string[] | null>(null);
+  const [disableButton, setDisableButton] = useState<boolean>(false);
 
   const handleDrop = (acceptedFiles: File[]) => {
     // Convert files to their object URLs for preview
@@ -44,6 +45,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   const uploadToCloudinary = async (files: File[]) => {
     const uploadedUrls = [];
 
+    setDisableButton(true);
+
     // Create a promise for each file and upload it
     const uploadPromises = files.map(async (file) => {
       const formData = new FormData();
@@ -65,6 +68,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
 
         const data = await response.json();
         uploadedUrls.push(data?.secure_url);
+        setDisableButton(false);
         return data?.secure_url;
       } catch (error) {
         console.error("Error uploading to Cloudinary", error);
@@ -152,8 +156,9 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
                   const cloudinaryResponse = await uploadToCloudinary(fileData);
                 }
               }}
+              disabled={disableButton}
             >
-              Upload
+              {disableButton ? "Uploading ..." : "Upload"}
             </button>
           </div>
         </>
