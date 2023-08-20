@@ -661,7 +661,7 @@ function BuyNow() {
             />
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-4 mb-4">
             {images &&
               images.map((image, index: number) => (
                 <div key={index} className="relative inline-block">
@@ -674,14 +674,18 @@ function BuyNow() {
                     src={image}
                     width={300}
                     alt="client photos"
-                    className="w-4/6 rounded"
+                    className="w-4/6 rounded shadow"
                   />
                 </div>
               ))}
           </div>
 
           {addImage && (
-            <ImageUploader setImages={setImages} parentName="buyNow" />
+            <ImageUploader
+              setImages={setImages}
+              parentName="buyNow"
+              images={images}
+            />
           )}
           <div className="primaryTextColor">
             <p className="text-xl font-extrabold mb-4 ">Special Note</p>
