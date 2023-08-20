@@ -15,6 +15,7 @@ import { RiDeleteBin5Line } from "react-icons/ri";
 import { useForm } from "react-hook-form";
 import Image from "next/image";
 import ImageUploader from "./ImageUploader";
+import { cloudinaryService, formDataService } from "@/services";
 
 interface User {
   _id: string;
@@ -106,7 +107,9 @@ const OrderDetailsModal: React.FC<Props> = ({
   );
   const [specialNotesEdit, setSpecialNotesEdit] = useState<boolean>(false);
   const [addImage, setAddImage] = useState<boolean>(false);
-  const [images, setImages] = useState<string[] | null>(null);
+  const [images, setImages] = useState<string[] | null>(
+    orderDetailsData?.formDataId?.images || null
+  );
 
   const {
     register,
@@ -129,6 +132,7 @@ const OrderDetailsModal: React.FC<Props> = ({
         const data = await res.json();
         setOrderDetailsData(data);
         setEvents(data?.formDataId?.eventsData);
+        setImages(data?.formDataId?.images);
       } catch (error) {
         console.error(error);
       }
@@ -383,6 +387,21 @@ const OrderDetailsModal: React.FC<Props> = ({
     }
   }
 
+  useEffect(() => {
+    async function updateImage(formDataId: string, images: string[]) {
+      const data = await formDataService.updateImageFormData(
+        formDataId,
+        images
+      );
+      return data;
+    }
+    if (images && orderDetailsData) {
+      const formDataId = orderDetailsData?.formDataId?._id;
+      updateImage(formDataId, images);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [images]);
+
   const handleBrideChange = handleSubmit((data) => saveChanges(data, "bride"));
   const handleGroomChange = handleSubmit((data) => saveChanges(data, "groom"));
   const handleEventChange = handleSubmit((data) => saveChanges(data, "event"));
@@ -417,36 +436,21 @@ const OrderDetailsModal: React.FC<Props> = ({
       updateFormData(updatedOrderDetails?.formDataId);
     }
   };
-  const handleImageDelete = (index: number) => {
-    if (orderDetailsData?.formDataId?.images) {
-      const updatedOrderDetails = {
-        ...orderDetailsData,
-        formDataId: {
-          ...orderDetailsData?.formDataId,
-          images: [
-            ...orderDetailsData?.formDataId?.images?.slice(0, index),
-            ...orderDetailsData?.formDataId?.images?.slice(index + 1),
-          ],
-        },
-      };
-      setOrderDetailsData(updatedOrderDetails);
-      // updateFormData(updatedOrderDetails?.formDataId);
+  const handleImageDelete = async (image: string, index: number) => {
+    if (images) {
+      try {
+        await cloudinaryService.deleteCloudinaryImage(image);
+
+        const updatedImages = [
+          ...images?.slice(0, index),
+          ...images?.slice(index + 1),
+        ];
+
+        setImages(updatedImages);
+      } catch (error) {
+        console.error(error);
+      }
     }
-  };
-
-  const handleDrop = (acceptedFiles: File[]) => {
-    console.log(acceptedFiles);
-    // Handle the images.
-    acceptedFiles.forEach((file: any) => {
-      const reader = new FileReader();
-
-      reader.onload = () => {
-        // Do whatever you want with the file contents
-        const binaryStr = reader.result;
-        console.log(binaryStr);
-      };
-      reader.readAsArrayBuffer(file);
-    });
   };
 
   return (
@@ -687,7 +691,7 @@ const OrderDetailsModal: React.FC<Props> = ({
                 </p>
 
                 <div className="grid grid-cols-3 gap-4">
-                  {events.map((event, index: number) => (
+                  {events?.map((event, index: number) => (
                     <div
                       className="my-4  border p-4 mr-4 rounded:md shadow"
                       key={index}
@@ -824,28 +828,30 @@ const OrderDetailsModal: React.FC<Props> = ({
                   />
                 </div>
                 {addImage && (
-                  <ImageUploader setImages={setImages} parentName="editOrder" />
+                  <ImageUploader
+                    setImages={setImages}
+                    parentName="editOrder"
+                    images={images}
+                  />
                 )}
                 {/* provide the link for photos */}
                 <div className="grid grid-cols-3 gap-4">
-                  {orderDetailsData?.formDataId?.images.map(
-                    (image: string, index: number) => (
-                      <div className="relative" key={index}>
-                        <RiDeleteBin5Line
-                          className="absolute right-20 top-4 bg-gray-300 rounded p-0.5 cursor-pointer"
-                          size={24}
-                          onClick={() => handleImageDelete(index)}
-                        />
-                        <img
-                          src={image}
-                          alt="Description of Image"
-                          width={300}
-                          height={500}
-                          className="rounded-md"
-                        />
-                      </div>
-                    )
-                  )}
+                  {images?.map((image: string, index: number) => (
+                    <div className="relative" key={index}>
+                      <RiDeleteBin5Line
+                        className="absolute right-20 top-4 bg-gray-300 rounded p-0.5 cursor-pointer"
+                        size={24}
+                        onClick={() => handleImageDelete(image, index)}
+                      />
+                      <img
+                        src={image}
+                        alt="Description of Image"
+                        width={300}
+                        height={500}
+                        className="rounded-md"
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
               <div className="border-b-2 pb-2 mt-4">
