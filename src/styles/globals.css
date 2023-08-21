@@ -184,3 +184,11 @@ body {
 .modalEditForm .ant-modal {
   width: 900px !important;
 }
+.modalOrderEdit .ant-modal {
+  min-height: 600px !important;
+}
+
+/* .ant-steps-item-icon {
+  background-color: #7e223c !important;
+  border-color: #7e223c !important;
+} */

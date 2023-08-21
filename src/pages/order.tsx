@@ -17,7 +17,7 @@ function Order() {
   }
 
   const dispatch = useDispatch();
-  const { formData, userData } = useSelector(counterStates);
+  const { userData } = useSelector(counterStates);
   const orders: Order[] = userData?.user?.myOrders;
 
   useEffect(() => {
@@ -132,8 +132,8 @@ function Order() {
                 <p className="font-semibold"> {getTime(order?.createdAt)}</p>
               </div>
               <div>
-                <p>TOTAL</p>
-                <p className="font-semibold">₹ {order?.paidAmount}</p>
+                <p>AMOUNT</p>
+                <p className="font-semibold ">₹ {order?.paidAmount}</p>
               </div>
             </div>
             <div>
@@ -142,10 +142,6 @@ function Order() {
             </div>
           </div>
           <div className="p-6  border-x  border-b rounded-b-lg">
-            <p className="text-green-600 text-lg font-bold">
-              Arriving : {getTime(order?.createdAt)} ,{" "}
-              {addDays(order?.createdAt, 4)}
-            </p>
             <div className=" flex justify-between">
               <div>
                 <div className="mt-4 flex justify-between">
@@ -156,23 +152,29 @@ function Order() {
                     alt="Design Explore"
                     className="rounded-lg"
                   />
-                  <p className="text-2xl ml-10">{order?.productId?.title}</p>
+                  <div className="text-2xl ml-10 flex flex-col justify-between ">
+                    <p>{order?.productId?.title}</p>
+                    <button
+                      className="border mt-10 block w-60 primaryColor text-white rounded-lg py-4 px-4 text-lg"
+                      onClick={() => setOrderDetailsModal(order._id)}
+                    >
+                      Order Details
+                    </button>
+                    <p className="text-green-600 text-lg font-bold">
+                      Arriving : {getTime(order?.createdAt)} ,{" "}
+                      {addDays(order?.createdAt, 4)}
+                    </p>
+                  </div>
                 </div>
               </div>
-              <div className="flex flex-col justify-between">
-                <p className="border-b-2 block w-60 primaryTextColor py-4 px-4 text-lg text-center font-bold">
-                  {order?.orderStatus}
-                </p>
-                <button className="border block w-60 primaryColor text-white rounded py-4 px-4 text-lg">
-                  Order Details
-                </button>
+              {/* <div className="flex flex-col justify-between">
                 <button
                   className="border block w-60 primaryColor text-white rounded py-4 px-4 text-lg"
                   onClick={() => setOrderDetailsModal(order._id)}
                 >
-                  Edit Order
+                  Edit or View Order
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
           {orderDetailsModal === order._id && (

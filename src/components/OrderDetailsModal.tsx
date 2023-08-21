@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { counterStates } from "@/redux/counterReducer";
-import { Modal, Switch } from "antd";
+import { Modal, Switch, Steps } from "antd";
 import React, {
   Dispatch,
   SetStateAction,
@@ -456,39 +456,27 @@ const OrderDetailsModal: React.FC<Props> = ({
     }
   };
 
+  const orderStatus = 3;
+
   return (
     <Modal
       open={orderDetailsModal}
       onCancel={() => setOrderDetailsModal(false)}
       footer={null}
       width={1200}
+      className="modalOrderEdit"
     >
       <>
         {!orderDetailsData ? (
-          <p>Please Wait ...</p>
+          <div className="flex flex-col justify-between items-center">
+            <p className="text-xl absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              {" "}
+              Please Wait ...
+            </p>
+            <Image src="/loader.gif" width={500} height={500} alt="loader" />
+          </div>
         ) : (
           <div className="mt-10 p-4">
-            <div className="flex justify-between">
-              {orderDetailsData?.createdAt ? (
-                <>
-                  <p className="text-gray-500">
-                    Order Date : {formatDate(orderDetailsData?.createdAt)}
-                  </p>
-                  <p className="text-gray-500">
-                    Order Time : {getTime(orderDetailsData?.createdAt)}
-                  </p>
-                  <p className="text-red-500">
-                    Delivery Date : {addDays(orderDetailsData?.createdAt, 4)}
-                  </p>
-                </>
-              ) : (
-                <>
-                  <p className="text-gray-500">Order Date : N/A</p>
-                  <p className="text-gray-500">Order Time : N/A</p>\
-                  <p className="text-red-500">Delivery Date : N/A</p>
-                </>
-              )}
-            </div>
             <div className="stateBorder mb-6 mt-4 pb-3">
               <p className="primaryTextColor text-2xl font-extrabold mb-2">
                 Client{" "}
@@ -500,6 +488,53 @@ const OrderDetailsModal: React.FC<Props> = ({
                   Client Mobile No. : +{orderDetailsData?.userId?.mobilenumber}
                 </p>
               </div>
+            </div>
+            <div className="stateBorder mb-4">
+              <p className="primaryTextColor text-2xl font-extrabold mb-2">
+                Order Status{" "}
+              </p>
+              <Steps
+                current={
+                  orderDetailsData?.orderStatus == "Received"
+                    ? 1
+                    : orderDetailsData?.orderStatus == "InProgress"
+                    ? 2
+                    : 3
+                }
+                items={[
+                  {
+                    title: "Order Confirmed",
+                    description: `${
+                      orderDetailsData?.createdAt
+                        ? formatDate(orderDetailsData.createdAt)
+                        : "N/A"
+                    } , ${
+                      orderDetailsData?.createdAt
+                        ? getTime(orderDetailsData.createdAt)
+                        : "N/A"
+                    }`,
+                  },
+                  {
+                    title: "Received by our Specialist",
+                  },
+                  {
+                    title: "Editing in Progress",
+                  },
+                  {
+                    title: "Expected Delivery",
+                    description: `${
+                      orderDetailsData?.createdAt
+                        ? addDays(orderDetailsData?.createdAt, 4)
+                        : "N/A"
+                    } , ${
+                      orderDetailsData?.createdAt
+                        ? getTime(orderDetailsData.createdAt)
+                        : "N/A"
+                    }`,
+                  },
+                ]}
+                className="mb-10"
+              />
             </div>
 
             <div>
