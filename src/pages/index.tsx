@@ -17,17 +17,17 @@ export default function Home() {
     <main>
       <div>
         <div
-          className="my-8 relative heroSection px-10"
-          style={{ position: "relative", minHeight: "500px" }}
+          className="md:my-8 md:relative heroSection px-10"
+          style={{ position: "relative" }}
         >
           <Image
-            src={"/nyota_hero_image.png"}
+            src={"/nyota_hero_image_mobile.png"}
             width={500}
             height={700}
             alt="Mehandi Hand"
-            className="w-full absolute right-10"
+            className="w-full md:w-9/12 md:absolute right-10 top-6 mt-8 md:mt-0 rounded-md"
           />
-          <div className="hero_div absolute p-8 left-10 top-1/2 transform -translate-y-1/2 rounded">
+          <div className="hero_div md:absolute rounded md:p-8 md:left-10 md:top-1/2 md:transform md:-translate-y-1/2">
             <h3 className="hero-title">
               Create cherished memories with our beautifully crafted Wedding
               Invites to celebrate your special day.
@@ -38,7 +38,7 @@ export default function Home() {
               of professionally designed templates that will transform your
               wedding footage into a breathtaking cinematic masterpiece.
             </p>
-            <div className="mt-10 text-right">
+            <div className="mt-10 text-right hidden md:block">
               <button
                 className="primaryColor text-white w-1/3 py-3 rounded text-2xl shadow"
                 onClick={handleExploreClick}
@@ -55,7 +55,7 @@ export default function Home() {
             width={500}
             height={700}
             alt="Flower Br"
-            className="w-4/6"
+            className="w-11/12 md:w-4/6"
           />
         </div>
         <Process />
@@ -65,7 +65,7 @@ export default function Home() {
             width={500}
             height={700}
             alt="Flower Br"
-            className="w-4/6 mt-12"
+            className=" w-11/12 md:w-4/6 mt-12"
           />
         </div>
         <div ref={exploreRef} id="explore"></div>

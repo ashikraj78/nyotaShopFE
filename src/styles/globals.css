@@ -76,13 +76,58 @@ body {
   font-weight: 300;
   line-height: normal;
 }
-.hero_div {
+
+/* .hero_div {
   background: rgba(39, 65, 67, 0.9);
   width: 772px;
+} */
+.hero_div {
+  background: rgba(39, 65, 67, 0.9);
+  max-width: 772px;
+  padding: 20px; /* Optional padding to give it some space */
+  box-sizing: border-box; /* Makes sure padding is included in the width */
 }
 .heroSection {
   height: 75vh;
 }
+@media (max-width: 768px) {
+  .logoImage {
+    width: 80px;
+  }
+  .hero_div {
+    padding: 10px;
+    background: none;
+  }
+  .hero_paragraph {
+    color: #353535;
+    font-size: 16px;
+  }
+  .hero-title {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  .heroSection {
+    height: auto;
+  }
+  /* .nyota_head_image {
+    width: 60px;
+  } */
+}
+
+/* Adjust styles for even smaller screens */
+@media (max-width: 480px) {
+  .hero_div {
+    padding: 5px; /* Further reduce padding for very small screens */
+  }
+  .hero_paragraph {
+    color: #353535;
+    font-size: 12px;
+  }
+  .hero-title {
+    font-size: 16px;
+  }
+}
+
 .triangle {
   width: 0;
   height: 0;
@@ -120,6 +165,17 @@ body {
 
 .template_text2 {
   left: -10px;
+}
+@media (max-width: 768px) {
+  .template_text1 {
+    left: -20px;
+  }
+  .template_text2 {
+    left: 0px;
+  }
+  .template_text3 {
+    left: -50px;
+  }
 }
 
 .buyProcessBorder {
