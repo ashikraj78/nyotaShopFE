@@ -2,6 +2,7 @@
 import Image from "next/image";
 import React, { ChangeEvent, use, useEffect, useState } from "react";
 import BuyProcess from "@/components/BuyProcess";
+import BuyProcessMobile from "@/components/BuyProcessMobile";
 import { Switch } from "antd";
 import ImageUploader from "@/components/ImageUploader";
 import { useDispatch, useSelector } from "react-redux";
@@ -168,7 +169,9 @@ function BuyNow() {
       return;
     } else if (page == 2) {
       const hasNullValue = events.some((event) =>
-        Object.values(event).some((value) => value === null)
+        Object.values(event).some(
+          (value) => value === null || value?.trim() === ""
+        )
       );
       if (hasNullValue) {
         setEventError(true);
@@ -176,6 +179,7 @@ function BuyNow() {
       } else {
         setEventError(false);
         setPage(page + 1);
+        window.scrollTo(0, 0);
         dispatch(
           setFormData({
             ...formData,
@@ -190,6 +194,7 @@ function BuyNow() {
       }
     } else {
       setPage(page + 1);
+      window.scrollTo(0, 0);
       dispatch(
         setFormData({
           ...formData,
@@ -405,12 +410,13 @@ function BuyNow() {
   return (
     <form onSubmit={handleSubmit}>
       <BuyProcess page={page} />
+      <BuyProcessMobile page={page} />
       {page === 1 && (
-        <div className="mx-36 mt-20">
+        <div className="mx-4 md:mx-36 mt-20">
           <select
             name="side"
             id="side"
-            className="border-b-2 w-1/4 pb-2 primaryTextColor text-xl font-thin"
+            className="border-b-2 w-full md:w-1/4 pb-2 primaryTextColor text-xl font-thin"
             value={relSide || ""}
             onChange={(e) => setRelSide(e.target.value)}
           >
@@ -422,13 +428,13 @@ function BuyNow() {
           </select>
           <div className="mt-12 primaryTextColor ">
             <p className="text-xl font-extrabold mb-10">Bride Side</p>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="md:grid grid-cols-3 gap-4">
               <div className="mb-8">
                 <input
                   placeholder="Name *"
                   {...register("brideName", { required: true })}
                   onChange={handleBrideChange}
-                  className="buy_inputPlaceholder border-b-2 text-xl pb-2   w-3/4"
+                  className="buy_inputPlaceholder border-b-2 text-xl p-2 w-full md:w-3/4"
                 />
                 {errors.brideName && (
                   <span className="text-red-500 block">
@@ -443,7 +449,7 @@ function BuyNow() {
                   placeholder="Mother’s Name *"
                   {...register("brideMotherName", { required: true })}
                   onChange={handleBrideChange}
-                  className="buy_inputPlaceholder border-b-2 text-xl pb-2 w-3/4"
+                  className="buy_inputPlaceholder border-b-2 text-xl p-2 w-full md:w-3/4"
                 />
                 {errors.brideMotherName && (
                   <span className="text-red-500 block">
@@ -457,7 +463,7 @@ function BuyNow() {
                   placeholder="Father’s Name *"
                   {...register("brideFatherName", { required: true })}
                   onChange={handleBrideChange}
-                  className="buy_inputPlaceholder border-b-2 text-xl pb-2  w-3/4"
+                  className="buy_inputPlaceholder border-b-2 text-xl p-2  w-full md:w-3/4"
                 />
                 {errors.brideFatherName && (
                   <span className="text-red-500 block">
@@ -471,7 +477,7 @@ function BuyNow() {
                   placeholder="Grand Mother’s Name"
                   {...register("brideGrandMotherName")}
                   onChange={handleBrideChange}
-                  className="buy_inputPlaceholder border-b-2 text-xl pb-2 w-3/4"
+                  className="buy_inputPlaceholder border-b-2 text-xl p-2 w-full md:w-3/4"
                 />
                 {errors.brideGrandMotherName && (
                   <span className="text-red-500 block">
@@ -485,7 +491,7 @@ function BuyNow() {
                   placeholder="Grand Father’s Name"
                   {...register("brideGrandFatherName")}
                   onChange={handleBrideChange}
-                  className="buy_inputPlaceholder border-b-2 text-xl pb-2 w-3/4"
+                  className="buy_inputPlaceholder border-b-2 text-xl p-2 w-full md:w-3/4"
                 />
                 {errors.brideGrandFatherName && (
                   <span className="text-red-500 block">
@@ -497,13 +503,13 @@ function BuyNow() {
           </div>
           <div className="mt-12 primaryTextColor ">
             <p className="text-xl font-extrabold mb-10">Groom Side</p>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="md:grid grid-cols-3 gap-4">
               <div className="mb-8">
                 <input
                   placeholder="Name *"
                   {...register("groomName", { required: true })}
                   onChange={handleGroomChange}
-                  className="buy_inputPlaceholder border-b-2 text-xl pb-2   w-3/4"
+                  className="buy_inputPlaceholder border-b-2 text-xl p-2 w-full md:w-3/4"
                 />
                 {errors.groomName && (
                   <span className="text-red-500 block">
@@ -517,7 +523,7 @@ function BuyNow() {
                   placeholder="Mother’s Name *"
                   {...register("groomMotherName", { required: true })}
                   onChange={handleGroomChange}
-                  className="buy_inputPlaceholder border-b-2 text-xl pb-2  w-3/4"
+                  className="buy_inputPlaceholder border-b-2 text-xl p-2  w-full md:w-3/4"
                 />
                 {errors.groomMotherName && (
                   <span className="text-red-500 block">
@@ -531,7 +537,7 @@ function BuyNow() {
                   placeholder="Father’s Name *"
                   {...register("groomFatherName", { required: true })}
                   onChange={handleGroomChange}
-                  className="buy_inputPlaceholder border-b-2 text-xl pb-2  w-3/4"
+                  className="buy_inputPlaceholder border-b-2 text-xl p-2  w-full md:w-3/4"
                 />
                 {errors.groomFatherName && (
                   <span className="text-red-500 block">
@@ -545,7 +551,7 @@ function BuyNow() {
                   placeholder="Grand Mother’s Name"
                   {...register("groomGrandMotherName")}
                   onChange={handleGroomChange}
-                  className="buy_inputPlaceholder border-b-2 text-xl pb-2  w-3/4"
+                  className="buy_inputPlaceholder border-b-2 text-xl p-2  w-full md:w-3/4"
                 />
                 {errors.groomGrandMotherName && (
                   <span className="text-red-500 block">
@@ -559,7 +565,7 @@ function BuyNow() {
                   placeholder="Grand Father’s Name"
                   {...register("groomGrandFatherName")}
                   onChange={handleGroomChange}
-                  className="buy_inputPlaceholder border-b-2 text-xl pb-2  w-3/4"
+                  className="buy_inputPlaceholder border-b-2 text-xl p-2  w-full md:w-3/4"
                 />
                 {errors.groomGrandFatherName && (
                   <span className="text-red-500 block">
@@ -572,7 +578,7 @@ function BuyNow() {
         </div>
       )}
       {page === 2 && (
-        <div className="mx-36 mt-20">
+        <div className=" mx-4 md:mx-36 md:mt-20">
           {events.map((event, index: number) => (
             <div key={index} className="mt-12 primaryTextColor ">
               <div className="flex">
@@ -587,7 +593,7 @@ function BuyNow() {
                 )}
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="md:grid grid-cols-3 gap-4">
                 <div>
                   <label htmlFor={`title${index}`} className="block opacity-60">
                     Title *
@@ -596,7 +602,7 @@ function BuyNow() {
                     id="title"
                     type="text"
                     placeholder="Event Title"
-                    className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-6 w-3/4"
+                    className="buy_inputPlaceholder border-b-2 text-xl p-2 mb-6 w-full md:w-3/4"
                     onChange={(e) => handleEventChange(index, e)}
                     value={event.title || ""}
                   />
@@ -609,7 +615,7 @@ function BuyNow() {
                     id="venue"
                     type="text"
                     placeholder="Venue Address"
-                    className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-6 w-3/4"
+                    className="buy_inputPlaceholder border-b-2 text-xl p-2 mb-6 w-full md:w-3/4"
                     onChange={(e) => handleEventChange(index, e)}
                     value={event.venue || ""}
                   />
@@ -621,7 +627,7 @@ function BuyNow() {
                   <input
                     id="time"
                     type="time"
-                    className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-6 w-3/4"
+                    className="buy_inputPlaceholder border-b-2 text-xl p-2 mb-6 w-full md:w-3/4"
                     onChange={(e) => handleEventChange(index, e)}
                     value={event.time || ""}
                   />
@@ -633,7 +639,7 @@ function BuyNow() {
                   <input
                     id="date"
                     type="date"
-                    className="buy_inputPlaceholder border-b-2 text-xl pb-2 mb-6 w-3/4"
+                    className="buy_inputPlaceholder border-b-2 text-xl p-2 mb-6 w-full md:w-3/4"
                     onChange={(e) => handleEventChange(index, e)}
                     value={event.date || ""}
                   />
@@ -653,7 +659,7 @@ function BuyNow() {
         </div>
       )}
       {page === 3 && (
-        <div className="mx-36 mt-20">
+        <div className="mx-4 md:mx-36 md:mt-20">
           <div className="mt-12 primaryTextColor flex ">
             <p className="text-xl font-extrabold mb-10 mr-10">Upload Photos</p>
             <Switch
@@ -735,17 +741,20 @@ function BuyNow() {
           </p>
         )}
         <button
-          className={`w-56 buyProcessBorder py-4 text-xl font-normal primaryTextColor mr-8 ${
+          className={`w-24 md:w-56 buyProcessBorder py-1.5 md:py-4 text-xl font-normal primaryTextColor mr-8 ${
             page < 2 ? "opacity-20" : ""
           }`}
-          onClick={() => setPage(page - 1)}
+          onClick={() => {
+            setPage(page - 1);
+            window.scrollTo(0, 0);
+          }}
           disabled={page < 2}
         >
           Back
         </button>
 
         <button
-          className={`w-56 buyProcessBorder py-4 text-xl font-normal primaryColor text-white ml-8 ${
+          className={`w-24 md:w-56 buyProcessBorder py-1.5 md:py-4 text-xl font-normal primaryColor text-white ml-8 ${
             page > 3 ? "opacity-20" : ""
           } `}
           onClick={(event) => handleNextClick(event)}
@@ -760,7 +769,7 @@ function BuyNow() {
           width={500}
           height={700}
           alt="Flower Br"
-          className="w-4/6"
+          className="w-11/12 md:w-4/6"
         />
       </div>
     </form>

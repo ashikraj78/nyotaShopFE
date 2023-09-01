@@ -2,7 +2,7 @@ import React from "react";
 
 function BuyProcess({ page }) {
   return (
-    <div className="flex justify-center mx-36  mt-16 space-x-28">
+    <div className="hidden md:flex justify-center md:mx-36  mt-16 space-x-28">
       <div className="relative">
         <div className="flex flex-col items-center ">
           <div

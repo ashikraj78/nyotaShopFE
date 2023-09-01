@@ -183,7 +183,9 @@ body {
 }
 
 .buy_inputPlaceholder::placeholder {
-  color: #7e223c;
+  color: #7c2c4398;
+  font-weight: 100;
+  font-size: large;
 }
 .videoWidth {
   width: 48%;
@@ -248,3 +250,30 @@ body {
   background-color: #7e223c !important;
   border-color: #7e223c !important;
 } */
+
+input[type="time"] {
+  position: relative;
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+  display: block;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  background: transparent;
+}
+input[type="date"] {
+  position: relative;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  display: block;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  background: transparent;
+}

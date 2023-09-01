@@ -74,3 +74,5 @@ export default function Home() {
     </main>
   );
 }
+
+// http://localhost:3000/product/64d21a6f773ad0c330a5bf3b
